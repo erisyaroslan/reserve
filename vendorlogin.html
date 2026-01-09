@@ -275,7 +275,7 @@
     <div class="brand-panel">
       <div class="logo"><span>🍽️</span> ReServe</div>
       <h1>Vendor Portal</h1>
-      <p>Manage your surplus inventory, reach more students, and track your contribution to a zero-waste campus.</p>
+      <p>Manage your surplus inventory, reach more students and then track your contribution to a zero-waste campus.</p>
       <div class="chips">
         <span class="chip">Inventory Management</span>
         <span class="chip">Sustainability Reports</span>
@@ -309,7 +309,7 @@
           <a class="link" href="#">Forgot password?</a>
         </div>
 
-        <button class="btn" type="submit">Access Dashboard</button>
+        <button class="btn" type="button" id="loginBtn">Access Dashboard</button>
       </form>
 
       <div class="alt-actions">
@@ -332,6 +332,12 @@
       password.type = isHidden ? "text" : "password";
       toggle.textContent = isHidden ? "Hide" : "Show";
     });
+    
+  document.getElementById('loginBtn').addEventListener('click', function() {
+    // This simulates a successful login check
+    window.location.href = "vendordashboard.html"; 
+  });
+
   </script>
 </body>
 </html>
