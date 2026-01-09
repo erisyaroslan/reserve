@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ReServe | Vendor Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-green: #2E7D32;
+      --accent-green: #66BB6A;
+      --light-green: #E8F5E9;
+      --text-dark: #2f2f2f;
+      --muted: #777;
+      --radius: 20px;
+      --shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background-color: #F5FBF6; color: var(--text-dark); min-height: 100vh; line-height: 1.6; }
+
+    /* HEADER */
+    header.dashboard {
+      position: fixed;
+      top: 0; width: 100%; height: 75px;
+      background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 8%; color: white; z-index: 1000;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    .logo { font-family: "Playfair Display", serif; font-size: 1.6rem; font-weight: 800; }
+    
+    .nav-links { display: flex; align-items: center; gap: 30px; }
+    .nav-item { color: white; text-decoration: none; font-weight: 600; font-size: 0.95rem; position: relative; }
+    
+    .badge {
+      position: absolute; top: -8px; right: -15px;
+      background: #FF5252; color: white; font-size: 0.7rem;
+      padding: 2px 6px; border-radius: 50%; border: 2px solid var(--primary-green);
+    }
+
+    .logout-btn { 
+        color: white; text-decoration: none; border: 1.5px solid white; 
+        padding: 8px 18px; border-radius: 12px; font-weight: 600; 
+        transition: 0.3s; 
+    }
+    .logout-btn:hover { background: white; color: var(--primary-green); }
+
+    /* MAIN CONTAINER - CHANGED TO SINGLE COLUMN */
+    main { padding: 110px 8% 50px; max-width: 1400px; margin: 0 auto; }
+
+    .menu-header { margin-bottom: 30px; }
+    .menu-header h2 { font-family: 'Playfair Display', serif; font-size: 2.2rem; margin-bottom: 15px; }
+    
+    .post-main-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--primary-green); color: white;
+      padding: 14px 28px; border-radius: 14px; text-decoration: none;
+      font-weight: 700; font-size: 1rem; transition: 0.3s;
+      box-shadow: 0 4px 15px rgba(46, 125, 50, 0.2); border: none; cursor: pointer;
+    }
+    .post-main-btn:hover { background: #1B5E20; transform: translateY(-2px); }
+
+    /* DYNAMIC MENU GRID - This makes items wrap to the next line */
+    .menu-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+      gap: 30px; 
+      margin-bottom: 30px;
+    }
+    
+    .menu-card { 
+      background: white; border-radius: var(--radius); overflow: hidden; 
+      display: flex; flex-direction: column; box-shadow: var(--shadow); 
+      border: 1px solid rgba(0,0,0,0.03); transition: 0.3s; 
+    }
+    .menu-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.08); }
+
+    .menu-photo { 
+      width: 100%; height: 200px; background-color: #f0f0f0; 
+      background-size: cover; background-position: center; position: relative;
+    }
+    .category-badge {
+      position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.9);
+      padding: 4px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; color: var(--primary-green);
+    }
+
+    .menu-details { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+    .menu-details h3 { font-size: 1.3rem; color: var(--text-dark); margin-bottom: 8px; }
+    .menu-desc { font-size: 0.9rem; color: var(--muted); margin-bottom: 20px; flex-grow: 1; }
+
+    .price-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .price-tag { font-weight: 800; color: var(--primary-green); font-size: 1.2rem; }
+    .old-price { text-decoration: line-through; color: #bbb; font-size: 0.9rem; margin-right: 8px; }
+    .stock-tag { font-size: 0.8rem; font-weight: 600; color: #666; background: var(--light-green); padding: 5px 12px; border-radius: 8px; }
+
+    .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-top: 15px; border-top: 1px solid #f5f5f5; }
+    .btn-action { 
+      padding: 12px; border-radius: 12px; border: none; font-weight: 600; font-size: 0.9rem; 
+      cursor: pointer; transition: 0.2s; text-align: center;
+    }
+    .edit-btn { background: #f0f7f0; color: var(--primary-green); }
+    .remove-btn { background: #fff1f1; color: #d32f2f; }
+
+  </style>
+</head>
+<body>
+
+  <header class="dashboard">
+    <div class="logo">ReServe 🌱</div>
+    <nav class="nav-links">
+        
+        <a href="vendordashboard.html" class="nav-item">Menu Management</a>
+        <a href="#" class="nav-item">Reservations</a>
+        <a href="index.html" class="logout-btn">Logout</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="menu-header">
+      <h2>Your Active Menu</h2>
+    </div>
+
+    <div class="menu-grid">
+      <div class="menu-card">
+        <div class="menu-photo" style="background-image: url('image/nasilemak.jpg');">
+          <div class="category-badge">Hot Meal</div>
+        </div>
+        <div class="menu-details">
+          <h3>Nasi Lemak Ayam</h3>
+          <p class="menu-desc">Fragrant coconut rice with crispy chicken, spicy sambal, and hard-boiled egg.</p>
+          <div class="price-row">
+            <div><span class="old-price">RM 8.00</span><span class="price-tag">RM 4.50</span></div>
+            <span class="stock-tag">5 Left</span>
+          </div>
+          <div class="card-actions">
+            <button class="btn-action edit-btn">Edit Details</button>
+            <button class="btn-action remove-btn">Remove</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card">
+        <div class="menu-photo" style="background-image: url('image/spaghettibolognese.webp');">
+          <div class="category-badge">Western</div>
+        </div>
+        <div class="menu-details">
+          <h3>Spaghetti Bolognese</h3>
+          <p class="menu-desc">Classic Italian beef bolognese served with al dente pasta and parmesan.</p>
+          <div class="price-row">
+            <div><span class="old-price">RM 10.00</span><span class="price-tag">RM 6.00</span></div>
+            <span class="stock-tag">2 Left</span>
+          </div>
+          <div class="card-actions">
+            <button class="btn-action edit-btn">Edit Details</button>
+            <button class="btn-action remove-btn">Remove</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-card">
+        <div class="menu-photo" style="background-image: url('image/sandwich.avif');">
+          <div class="category-badge">Snacks</div>
+        </div>
+        <div class="menu-details">
+          <h3>Egg Mayo Sandwich</h3>
+          <p class="menu-desc">Fresh wholemeal bread with creamy egg mayo filling, perfect for a quick snack.</p>
+          <div class="price-row">
+            <div><span class="old-price">RM 5.00</span><span class="price-tag">RM 3.00</span></div>
+            <span class="stock-tag">10 Left</span>
+          </div>
+          <div class="card-actions">
+            <button class="btn-action edit-btn">Edit Details</button>
+            <button class="btn-action remove-btn">Remove</button>
+          </div>
+        </div>
+      </div>
+      
+      </div>
+      <div class="menu-header">
+      <button class="post-main-btn" onclick="window.location.href='add-menu.html'">
+          <span>➕</span> Post Surplus Meal
+      </button>
+    </div>
+  </main>
+
+  <script>
+    document.querySelectorAll('.remove-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        confirm("Confirm removal of this listing?");
+      });
+    });
+  </script>
+</body>
+</html>

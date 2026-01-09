@@ -309,7 +309,7 @@
           <a class="link" href="#">Forgot password?</a>
         </div>
 
-        <button class="btn" type="submit">Access Dashboard</button>
+        <button class="btn" type="button" id="loginBtn">Access Dashboard</button>
       </form>
 
       <div class="alt-actions">
@@ -332,6 +332,12 @@
       password.type = isHidden ? "text" : "password";
       toggle.textContent = isHidden ? "Hide" : "Show";
     });
+    
+  document.getElementById('loginBtn').addEventListener('click', function() {
+    // This simulates a successful login check
+    window.location.href = "vendordashboard.html"; 
+  });
+
   </script>
 </body>
 </html>
