@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>ReServe | How It Works</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400&family=Playfair+Display:wght@700;900&display=swap"
+    rel="stylesheet">
+  <script src="https://unpkg.com/phosphor-icons"></script>
+
+  <style>
+    :root {
+      --primary-green: #2E7D32;
+      --accent-green: #66BB6A;
+      --deep-sage: #1B4332;
+      --text-dark: #2f2f2f;
+      /* Darker glass tint for better green text contrast */
+      --glass-bg: rgba(255, 255, 255, 0.25);
+      --glass-border: rgba(255, 255, 255, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: #D8E2DC;
+      color: var(--text-dark);
+      font-family: "Inter", sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ===== LUSH GREEN BACKGROUND SYSTEM ===== */
+    .bg-gradient-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      background:
+        radial-gradient(circle at 0% 0%, #2D6A4F 0%, transparent 40%),
+        radial-gradient(circle at 100% 0%, #52B788 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, #D8E2DC 0%, #B7E4C7 100%);
+    }
+
+    /* ===== DASHBOARD HEADER (CONSISTENT WITH HOME) ===== */
+    header.dashboard {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 75px;
+      background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 8%;
+      color: white;
+      z-index: 1000;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    }
+
+    .dashboard .logo {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      font-family: "Playfair Display", serif;
+      background: linear-gradient(135deg, #ffffff, rgba(255, 255, 255, 0.95));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .dashboard .logo:hover {
+      transform: scale(1.05);
+    }
+
+    .dashboard nav a {
+      font-family: "Inter", sans-serif;
+      padding: 10px 20px;
+      text-decoration: none;
+      color: white;
+      font-weight: 500;
+      font-size: 0.95rem;
+      border-radius: 12px;
+      transition: 0.3s;
+    }
+
+    .dashboard nav a:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* ===== CONTENT AREA ===== */
+    main {
+      padding-top: 140px;
+    }
+
+    main,
+    .journey {
+      background: transparent;
+    }
+
+    .hero-section {
+      text-align: center;
+      padding: 40px 8%;
+      color: var(--deep-sage);
+    }
+
+    .hero-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 4rem;
+      margin-bottom: 20px;
+    }
+
+    .hero-p {
+      font-family: "Outfit", sans-serif;
+      font-weight: 300;
+      font-size: 1.25rem;
+      max-width: 600px;
+      margin: 0 auto;
+      color: var(--deep-sage);
+      line-height: 1.8;
+    }
+
+    /* ===== UNIFIED GLASS CARDS (GREEN TEXT) ===== */
+    .journey {
+      padding: 40px 8% 100px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .step-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 60px;
+      margin-bottom: 50px;
+      padding: 60px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border-radius: 40px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+      opacity: 0;
+      transform: translateY(40px);
+      transition: 0.8s ease-out;
+    }
+
+    .step-card.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .step-card:nth-child(even) {
+      flex-direction: row-reverse;
+    }
+
+    .step-content {
+      flex: 1.5;
+      max-width: 520px;
+    }
+
+    .step-tag {
+      display: inline-block;
+      padding: 6px 14px;
+      background: var(--deep-sage);
+      color: white;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      font-family: "Inter", sans-serif;
+    }
+
+    /* Headings and Paragraphs now in Deep Green for readability */
+    .step-content h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      color: var(--deep-sage);
+      margin-bottom: 20px;
+    }
+
+    .step-content p {
+      font-family: "Outfit", sans-serif;
+      font-weight: 400;
+      /* Slightly thicker for better legibility in green */
+      font-size: 1.2rem;
+      line-height: 1.7;
+      color: var(--deep-sage);
+      text-align: justify;
+    }
+
+    /* BIG ICON STYLING */
+    .step-icon-large {
+      font-size: 10rem;
+      color: var(--primary-green);
+      /* Matching the primary brand green */
+      flex-shrink: 0;
+      opacity: 0.9;
+    }
+
+    .reserve-footer {
+      padding: 30px 8%;
+      text-align: center;
+      /* Subtle glass effect that blends with your new gradient */
+      background: rgba(232, 245, 233, 0.3);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(27, 67, 50, 0.1);
+      margin-top: 20px;
+    }
+
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .footer-tagline {
+      font-family: "Inter", sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--primary-green);
+      letter-spacing: 0.5px;
+      margin: 0;
+      /* Resets paragraph margin */
+    }
+
+    .footer-copyright {
+      font-family: "Inter", sans-serif;
+      font-size: 0.8rem;
+      color: var(--text-dark);
+      opacity: 0.6;
+    }
+
+    .floating-icon {
+      position: fixed;
+      color: var(--deep-sage);
+      /* Increase opacity slightly if they are too faint to see */
+      opacity: 0.15;
+      font-size: 6rem;
+      /* -1 ensures they stay behind the glass cards */
+      z-index: -1;
+      pointer-events: none;
+      animation: float 25s linear infinite;
+    }
+
+    @keyframes float {
+      from {
+        transform: translateY(110vh) rotate(0deg);
+      }
+
+      to {
+        transform: translateY(-20vh) rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-gradient-overlay"></div>
+
+  <i class="ph-bowl-food floating-icon" style="left: 10%; animation-duration: 20s;"></i>
+  <i class="ph-leaf floating-icon" style="left: 80%; animation-delay: 5s;"></i>
+  <i class="ph-apple-logo floating-icon" style="left: 45%; animation-duration: 30s;"></i>
+
+  <header class="dashboard">
+    <div class="logo">ReServe 🌱</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="meals.html">Meals</a>
+      <a href="manual.html">How It Works</a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero-section">
+      <h2>The ReServe Journey</h2>
+      <p class="hero-p">A smarter way to eat, a simpler way to save. Follow the path from campus surplus to your next
+        sustainable meal.</p>
+    </section>
+
+    <section class="journey">
+
+      <div class="step-card reveal">
+        <div class="step-content">
+          <div class="step-tag">Step 01</div>
+          <h3>Vendors List Surplus</h3>
+          <p>Local or nearby  campus vendors identify meals that are perfectly good but unsold. They upload them to our dashboard
+            with a significant discount, ensuring nothing goes to waste.</p>
+        </div>
+        <div class="step-icon-large">
+          <i class="ph-storefront"></i>
+        </div>
+      </div>
+
+      <div class="step-card reveal">
+        <div class="step-content">
+          <div class="step-tag">Step 02</div>
+          <h3>Claim Your Meal</h3>
+          <p>Browse the live map in real-time. Once you find a meal you like, reserve it instantly. No more wondering
+            what's left at the cafeteria at the end of the day.</p>
+        </div>
+        <div class="step-icon-large">
+          <i class="ph-hand-pointing"></i>
+        </div>
+      </div>
+
+      <div class="step-card reveal">
+        <div class="step-content">
+          <div class="step-tag">Step 03</div>
+          <h3>Quick Pickup</h3>
+          <p>Head to the location, show your digital receipt, and grab your food. Fast, easy, and you just helped save a
+            perfectly good meal from the bin.</p>
+        </div>
+        <div class="step-icon-large">
+          <i class="ph-qr-code"></i>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="reserve-footer">
+    <div class="footer-content">
+      <p class="footer-tagline">Eat Smart • Live Green</p>
+      <div class="footer-copyright">© 2026 ReServe. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('active');
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+
+</html>
