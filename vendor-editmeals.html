@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>ReServe | Edit Meal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-green: #2E7D32;
+            --accent-green: #66BB6A;
+            --darker-green: #1B4332;
+            --soft-bg: #F5FBF6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            /* YOUR FANCY MESH BACKGROUND */
+            background: radial-gradient(circle at 0% 0%, #2D6A4F 0%, transparent 40%),
+                radial-gradient(circle at 100% 0%, #52B788 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, #D8E2DC 0%, #B7E4C7 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ORIGINAL NAVBAR STYLE */
+        header.dashboard {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 75px;
+            background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            z-index: 2000;
+            /* Highest priority */
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        /* MAIN LAYOUT: Split View to fill the "Emptiness" */
+        .edit-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            max-width: 1300px;
+            margin: 0 auto;
+            gap: 40px;
+            padding: 120px 40px 60px;
+            /* Top padding accounts for 75px navbar */
+            min-height: 100vh;
+        }
+
+        /* LEFT SIDE: THE PREVIEW (Stops it from looking empty) */
+        .preview-pane {
+            position: sticky;
+            top: 110px;
+            height: fit-content;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            text-align: center;
+        }
+
+        .preview-pane h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--darker-green);
+            margin-bottom: 25px;
+        }
+
+        .meal-card-mockup {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        .mock-img {
+            width: 100%;
+            height: 200px;
+            background: url('image/nasilemak.jpg') center/cover;
+        }
+
+        .mock-details {
+            padding: 20px;
+        }
+
+        /* RIGHT SIDE: THE FORM */
+        .form-pane {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            padding: 60px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .form-pane h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            color: var(--darker-green);
+            margin-bottom: 10px;
+        }
+
+        .sub-title {
+            font-size: 1rem;
+            color: var(--darker-green);
+            font-weight: 600;
+            opacity: 0.7;
+            margin-bottom: 40px;
+        }
+
+        .input-section {
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+            padding-top: 25px;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--darker-green);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            opacity: 0.7;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1.5px solid #E0E0E0;
+            background: white;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--primary-green);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1);
+        }
+
+        .price-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* BUTTONS */
+        .action-btns {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        .btn-save {
+            flex: 2;
+            background: var(--darker-green);
+            color: white;
+            padding: 18px;
+            border-radius: 15px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-save:hover {
+            background: #000;
+            transform: translateY(-3px);
+        }
+
+        .btn-discard {
+            flex: 1;
+            background: #F1F1F1;
+            color: #666;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* SUCCESS STATE */
+        .success-overlay {
+            position: absolute;
+            inset: 0;
+            background: white;
+            border-radius: 30px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="dashboard">
+        <a href="vendordashboard.html" class="back-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            BACK TO DASHBOARD
+        </a>
+    </header>
+
+    <div class="edit-wrapper">
+
+        <aside class="preview-pane">
+            <h3>Live Preview</h3>
+            <div class="meal-card-mockup">
+                <div class="mock-img"></div>
+                <div class="mock-details">
+                    <p style="font-size: 0.7rem; font-weight: 800; color: var(--primary-green); margin-bottom: 5px;">HOT
+                        MEAL</p>
+                    <h4 style="font-size: 1.2rem; color: #333; margin-bottom: 10px;">Nasi Lemak Ayam</h4>
+                    <p style="font-size: 0.85rem; color: #777; margin-bottom: 15px;">Fragrant coconut rice with crispy
+                        chicken...</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 800; color: var(--darker-green);">RM 4.50</span>
+                        <span
+                            style="font-size: 0.75rem; background: #E8F5E9; padding: 4px 8px; border-radius: 5px; color: var(--primary-green);">5
+                            Left</span>
+                    </div>
+                </div>
+            </div>
+            <p
+                style="margin-top: 30px; font-size: 0.85rem; color: var(--darker-green); opacity: 0.6; font-style: italic;">
+                "This is how students will see your meal in the listing."
+            </p>
+        </aside>
+
+        <main class="form-pane">
+
+            <div class="success-overlay" id="success">
+                <div style="font-size: 60px;">🚀</div>
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 2.2rem; margin: 20px 0 10px;">Meal
+                    Updated!</h2>
+                <p style="color: #888;">Returning you to your dashboard...</p>
+            </div>
+
+            <h1>Edit Your Meal's Details</h1>
+            <p class="sub-title">Update your meal information and pricing.</p>
+
+            <div class="input-section">
+                <label>Upload New Photo</label>
+                <input type="file" style="border: none; padding-left: 0;">
+            </div>
+
+            <div class="input-section">
+                <label>Meal Name</label>
+                <input type="text" value="Nasi Lemak Ayam">
+            </div>
+
+            <div class="input-section">
+                <label>Description</label>
+                <textarea
+                    rows="3">Fragrant coconut rice with crispy chicken, spicy sambal, and hard-boiled egg.</textarea>
+            </div>
+
+            <div class="price-grid input-section">
+                <div>
+                    <label>Original Price</label>
+                    <input type="text" value="RM 9.00">
+                </div>
+                <div>
+                    <label>Surplus Price</label>
+                    <input type="text" value="RM 4.50" style="color: var(--primary-green); font-weight: 800;">
+                </div>
+            </div>
+
+            <div class="input-section">
+                <label>Available Quantity</label>
+                <input type="number" value="5">
+            </div>
+
+            <div class="action-btns">
+                <button class="btn-save" onclick="done()">Update Meal Details</button>
+                <a href="vendordashboard.html" class="btn-discard">Discard</a>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        function done() {
+            document.getElementById('success').style.display = 'flex';
+            setTimeout(() => {
+                window.location.href = 'vendordashboard.html';
+            }, 2200);
+        }
+    </script>
+
+</body>
+
+</html>
