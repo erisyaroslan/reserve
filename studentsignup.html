@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReServe | Student Sign Up</title>
+
+  <style>
+    :root {
+      --primary-green: #2E7D32;
+      --accent-green: #66BB6A;
+      --muted: #5f6a73;
+      --radius: 15px;
+      --shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", sans-serif; }
+
+    body {
+      height: 100vh;
+      display: grid;
+      place-items: center;
+      /* Add these lines to set the background image */
+      background-image: url("image/sign_up.jpeg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      /* Optional: adds a slight dark overlay to help the white box pop */
+      background-color: rgba(0, 0, 0, 0.4); 
+      background-blend-mode: overlay;
+      
+      overflow: hidden; 
+      padding: 10px;
+    }
+
+    .shell {
+      width: min(860px, 100%);
+      max-height: 92vh;
+      background: white;
+      border-radius: 24px;
+      /* Increased shadow to stand out against the background image */
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2); 
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      overflow: hidden;
+      /* Ensures the box stays centered even if screen is small */
+      margin: auto;
+    }
+
+    .brand-panel {
+      background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+      color: white;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .logo { font-size: 1.8rem; font-weight: 800; margin-bottom: 5px; }
+    .brand-panel h1 { font-size: 1.8rem; line-height: 1.1; }
+    .brand-panel p { font-size: 0.9rem; opacity: 0.9; }
+
+    .form-panel { 
+      padding: 25px 40px; 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: center; 
+    }
+
+    .form-header { margin-bottom: 15px; }
+    .form-header h2 { font-size: 1.5rem; color: var(--primary-green); }
+    .form-header p { font-size: 0.85rem; color: var(--muted); }
+
+    form { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 10px; 
+    }
+
+    .full-width { grid-column: span 2; }
+
+    label { font-weight: 600; font-size: 0.75rem; color: #444; margin-bottom: 3px; display: block; }
+
+    input, select {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1.5px solid #eef2ee;
+      font-size: 0.9rem;
+      background-color: white;
+    }
+
+    /* Change color of placeholder in dropdown */
+    select:invalid { color: #999; }
+
+    .btn {
+      grid-column: span 2;
+      padding: 12px;
+      border-radius: var(--radius);
+      border: none;
+      background: linear-gradient(135deg, var(--primary-green), #25712d);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn:hover { 
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+    }
+
+    .footer-note { 
+      grid-column: span 2; 
+      text-align: center; 
+      margin-top: 10px; 
+      font-size: 0.8rem; 
+      color: var(--muted); 
+    }
+
+    .link { color: var(--primary-green); text-decoration: none; font-weight: 700; }
+
+    @media (max-width: 800px) {
+      .shell { grid-template-columns: 1fr; max-height: 98vh; }
+      .brand-panel { display: none; }
+      .form-panel { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="shell">
+    <div class="brand-panel">
+      <div class="logo"><span>🍽️</span> ReServe</div>
+      <h1>Student Registration</h1>
+      <p>Save money and enjoy surplus meals from your favorite campus vendors.</p>
+    </div>
+
+    <div class="form-panel">
+      <div class="form-header">
+        <h2>Create Account</h2>
+        <p>Join the student community at UPM.</p>
+      </div>
+
+      <form id="studentSignupForm">
+        <div class="full-width">
+          <label>Full Name</label>
+          <input type="text" id="fullName" placeholder="Enter your full name" required />
+        </div>
+
+        <div>
+          <label>Student ID</label>
+          <input type="text" id="studentID" placeholder="e.g. 212345" required />
+        </div>
+
+        <div>
+          <label>UPM Email</label>
+          <input type="email" id="email" placeholder="name@student.upm.edu.my" required />
+        </div>
+
+        <div class="full-width">
+          <label>Faculty</label>
+          <select id="faculty" required>
+            <option value="" disabled selected hidden>Select Faculty</option>
+            <option>Faculty of Computer Science & IT</option>
+            <option>Faculty of Engineering</option>
+            <option>Faculty of Agriculture</option>
+            <option>Faculty of Science</option>
+            <option>Faculty of Modern Languages & Communication</option>
+            <option>Faculty of Economics & Management</option>
+            <option>Faculty of Educational Studies</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Password</label>
+          <input type="password" id="password" placeholder="••••••••" required />
+        </div>
+
+        <div>
+          <label>Confirm Password</label>
+          <input type="password" id="confirmPassword" placeholder="••••••••" required />
+        </div>
+
+        <button type="submit" class="btn">Register as Student</button>
+
+        <div class="footer-note">
+          Already have an account? <a href="login.html" class="link">Log in here</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('studentSignupForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirm = document.getElementById('confirmPassword').value;
+      const faculty = document.getElementById('faculty').value;
+
+      // Validation
+      if(!faculty) {
+        alert("Please select your faculty.");
+        return;
+      }
+
+      if(password !== confirm) {
+        alert("Passwords do not match!");
+        return;
+      }
+
+      // Store student data locally
+      localStorage.setItem('studentUser', JSON.stringify({
+        email: email,
+        password: password
+      }));
+
+      alert("Student account created successfully!");
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>

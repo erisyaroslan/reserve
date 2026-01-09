@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>ReServe | Find Meals</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@300;400;600&family=Playfair+Display:wght@700;900&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/phosphor-icons"></script>
+
+    <style>
+        :root {
+            --primary-green: #2E7D32;
+            --accent-green: #66BB6A;
+            --deep-sage: #1B4332;
+            --glass: rgba(255, 255, 255, 0.28);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: radial-gradient(circle at 0% 0%, #2D6A4F 0%, transparent 40%),
+                radial-gradient(circle at 100% 0%, #52B788 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, #D8E2DC 0%, #B7E4C7 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            font-family: "Inter", sans-serif;
+        }
+
+        /* ===== NAVBAR (CONSISTENT) ===== */
+        header.dashboard {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 75px;
+            background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 8%;
+            color: white;
+            z-index: 1000;
+        }
+
+        .dashboard .logo {
+            font-size: 1.75rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            font-family: "Playfair Display", serif;
+            background: linear-gradient(135deg, #ffffff, rgba(255, 255, 255, 0.95));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .dashboard .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .dashboard nav a {
+            font-family: "Inter", sans-serif;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: white;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+
+        .dashboard nav a:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        main {
+            padding-top: 130px;
+        }
+
+        .explore-hero {
+            text-align: center;
+            padding: 20px 8% 40px;
+        }
+
+        .explore-hero h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.8rem;
+            color: var(--deep-sage);
+        }
+
+        .grid-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 4% 150px;
+            position: relative;
+        }
+
+        .cafe-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        /* CAFE CARD STYLING */
+        .cafe-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 30px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 520px;
+            transition: transform 0.3s ease;
+        }
+
+        .cafe-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .cafe-header-img {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: white;
+            color: var(--deep-sage);
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.7rem;
+        }
+
+        .cafe-content {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cafe-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.7rem;
+            color: var(--deep-sage);
+            margin-bottom: 5px;
+        }
+
+        .cafe-location {
+            font-size: 0.8rem;
+            color: var(--primary-green);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        /* MENU ITEMS */
+        .menu-preview {
+            margin-top: auto;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 20px;
+            padding: 15px;
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .food-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--deep-sage);
+        }
+
+        .food-price {
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        .food-price del {
+            font-size: 0.75rem;
+            color: #888;
+            margin-right: 4px;
+        }
+
+        /* Popup Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            display: none;
+            /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        /* Popup Box */
+        .modal-box {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-box i {
+            font-size: 3rem;
+            color: var(--primary-green);
+            margin-bottom: 20px;
+        }
+
+        .modal-box h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--deep-sage);
+        }
+
+        .modal-box p {
+            margin-bottom: 25px;
+            color: #666;
+        }
+
+        .modal-btns {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .modal-login-btn {
+            background: var(--deep-sage);
+            color: white;
+            padding: 14px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .modal-close-btn {
+            background: #f0f0f0;
+            color: #444;
+            padding: 10px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* LOCK SECTION */
+        .lock-section {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(to top, #D8E2DC 40%, transparent 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 80px;
+            z-index: 50;
+        }
+
+        .lock-card {
+            background: white;
+            padding: 45px;
+            border-radius: 40px;
+            text-align: center;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.15);
+            max-width: 500px;
+            border: 1px solid rgba(46, 125, 50, 0.1);
+        }
+
+        .signup-btn {
+            display: inline-block;
+            background: var(--deep-sage);
+            color: white;
+            padding: 16px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            margin-top: 25px;
+            transition: 0.3s;
+        }
+
+        .signup-btn:hover {
+            background: var(--primary-green);
+            transform: scale(1.05);
+        }
+
+        /* ===== FOOTER ===== */
+        .reserve-footer {
+            padding: 30px 8%;
+            text-align: center;
+            /* Subtle glass effect that blends with your new gradient */
+            background: rgba(232, 245, 233, 0.3);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(27, 67, 50, 0.1);
+            margin-top: 20px;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .footer-tagline {
+            font-family: "Inter", sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--primary-green);
+            letter-spacing: 0.5px;
+            margin: 0;
+            /* Resets paragraph margin */
+        }
+
+        .footer-copyright {
+            font-family: "Inter", sans-serif;
+            font-size: 0.8rem;
+            color: var(--text-dark);
+            opacity: 0.6;
+        }
+
+
+        @media (max-width: 1150px) {
+            .cafe-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 750px) {
+            .cafe-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="dashboard">
+        <div class="logo">ReServe 🌱</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="meals.html">Meals</a>
+            <a href="manual.html">How It Works</a>
+            <a href="login.html">Login</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="explore-hero">
+            <h2>Find Your Meals</h2>
+            <p style="font-family:'Outfit'; font-weight:300; font-size:1.3rem; color:var(--deep-sage);">Discover surplus
+                meals from your favorite campus spots or nearby restaurants.</p>
+        </section>
+
+        <div class="grid-container">
+            <div class="cafe-grid">
+
+                <div class="cafe-card">
+                    <div class="cafe-header-img" style="background-image: url('image/meals1.jpg');">
+                        <div class="status-badge">4 LEFT</div>
+                    </div>
+                    <div class="cafe-content">
+                        <h3>Pantai Timur Delights</h3>
+                        <p class="cafe-location"><i class="ph-map-pin"></i> Umai Cafe, 14th College</p>
+                        <div class="menu-preview">
+                            <div class="menu-item"><span class="food-name">Nasi Kukus Ayam</span><span
+                                    class="food-price"><del>RM10</del> RM7.50</span></div>
+                            <div class="menu-item"><span class="food-name">Nasi Lemak Ayam Goreng</span><span
+                                    class="food-price"><del>RM8</del> RM6.00</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cafe-card">
+                    <div class="cafe-header-img" style="background-image: url('image/meals7.jpg');">
+                        <div class="status-badge">2 LEFT</div>
+                    </div>
+                    <div class="cafe-content">
+                        <h3>He & She Coffee</h3>
+                        <p class="cafe-location"><i class="ph-map-pin"></i> Anjung Siswazah @ Library UPM</p>
+                        <div class="menu-preview">
+                            <div class="menu-item"><span class="food-name">Mutton Mandi Rice</span><span
+                                    class="food-price"><del>RM15.90</del> RM11.00</span></div>
+                            <div class="menu-item"><span class="food-name">Spaghetti Carbonara</span><span
+                                    class="food-price"><del>RM9.80</del> RM7.80</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cafe-card">
+                    <div class="cafe-header-img" style="background-image: url('image/meals2.jpg');">
+                        <div class="status-badge">7 LEFT</div>
+                    </div>
+                    <div class="cafe-content">
+                        <h3>Chinese Muslim Noodles</h3>
+                        <p class="cafe-location"><i class="ph-map-pin"></i> Food Court SPE</p>
+                        <div class="menu-preview">
+                            <div class="menu-item"><span class="food-name">Teriyaki Bowl</span><span
+                                    class="food-price"><del>RM13</del> RM8.00</span></div>
+                            <div class="menu-item"><span class="food-name">Mi Tarik (Beef)</span><span
+                                    class="food-price"><del>RM10</del> RM7.00</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cafe-card">
+                    <div class="cafe-header-img" style="background-image: url('image/meals3.jpg');">
+                        <div class="status-badge">5 LEFT</div>
+                    </div>
+                    <div class="cafe-content">
+                        <h3>Masakan Panas Campur</h3>
+                        <p class="cafe-location"><i class="ph-map-pin"></i> Putra Food Court</p>
+                        <div class="menu-preview">
+                            <div class="menu-item"><span class="food-name">Bihun Tomyam</span><span
+                                    class="food-price"><del>RM9</del> RM5.00</span></div>
+                            <div class="menu-item"><span class="food-name">Nasi Goreng Pattaya</span><span
+                                    class="food-price"><del>RM8</del> RM6.50</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cafe-card">
+                    <div class="cafe-header-img" style="background-image: url('image/meals4.jpg');">
+                        <div class="status-badge">SOLD OUT</div>
+                    </div>
+                    <div class="cafe-content">
+                        <h3>Roots Cafe</h3>
+                        <p class="cafe-location"><i class="ph-map-pin"></i> Science Faculty</p>
+                        <div class="menu-preview">
+                            <div class="menu-item"><span class="food-name">Vegan Pasta</span><span
+                                    class="food-price"><del>RM11</del> RM4.00</span></div>
+                            <div class="menu-item"><span class="food-name">Fruit Medley</span><span
+                                    class="food-price"><del>RM6</del> RM1.50</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cafe-card">
+                    <div class="cafe-header-img" style="background-image: url('image/meals8.jpg');">
+                        <div class="status-badge">NEW SPOT</div>
+                    </div>
+                    <div class="cafe-content">
+                        <h3>Pizza Port</h3>
+                        <p class="cafe-location"><i class="ph-map-pin"></i> Sri Serdang Food Court</p>
+                        <div class="menu-preview">
+                            <div class="menu-item"><span class="food-name">2 Gourmet Slices</span><span
+                                    class="food-price"><del>RM9</del> RM3.00</span></div>
+                            <div class="menu-item"><span class="food-name">Garlic Knots</span><span
+                                    class="food-price"><del>RM5</del> RM1.20</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cafe-card">
+                    <div class="cafe-header-img" style="background-image: url('image/meals5.jpg');">
+                        <div class="status-badge">SOLD OUT</div>
+                    </div>
+                    <div class="cafe-content">
+                        <h3>Burger House</h3>
+                        <p class="cafe-location"><i class="ph-map-pin"></i> Sri Serdang Park</p>
+                        <div class="menu-preview">
+                            <div class="menu-item"><span class="food-name">Classic Slider</span><span
+                                    class="food-price"><del>RM10</del> RM4.00</span></div>
+                            <div class="menu-item"><span class="food-name">Sweet Potato Fries</span><span
+                                    class="food-price"><del>RM6</del> RM2.00</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cafe-card">
+                    <div class="cafe-header-img" style="background-image: url('image/meals9.jpg');">
+                        <div class="status-badge">6 LEFT</div>
+                    </div>
+                    <div class="cafe-content">
+                        <h3>Hot Pasta</h3>
+                        <p class="cafe-location"><i class="ph-map-pin"></i> CSIT Faculty</p>
+                        <div class="menu-preview">
+                            <div class="menu-item"><span class="food-name">Fettuccine Alfre-go</span><span
+                                    class="food-price"><del>RM14</del> RM5.50</span></div>
+                            <div class="menu-item"><span class="food-name">Caesar Salad</span><span
+                                    class="food-price"><del>RM9</del> RM3.00</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cafe-card">
+                    <div class="cafe-header-img" style="background-image: url('image/meals6.jpg');">
+                        <div class="status-badge">10 LEFT</div>
+                    </div>
+                    <div class="cafe-content">
+                        <h3>Zen Sushi</h3>
+                        <p class="cafe-location"><i class="ph-map-pin"></i> Canselori Putra @ UPM</p>
+                        <div class="menu-preview">
+                            <div class="menu-item"><span class="food-name">8pc Maki Roll</span><span
+                                    class="food-price"><del>RM16</del> RM6.50</span></div>
+                            <div class="menu-item"><span class="food-name">Edamame</span><span
+                                    class="food-price"><del>RM5</del> RM1.50</span></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="lock-section">
+                <div class="lock-card">
+                    <h4>And 10+ more kitchens...</h4>
+                    <p>Sign up now to unlock full list, menus, and instant reservations.</p>
+                    <a href="login.html" class="signup-btn">Unlock All Menus</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="reserve-footer">
+        <div class="footer-content">
+            <p class="footer-tagline">Eat Smart • Live Green</p>
+            <div class="footer-copyright">© 2026 ReServe. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-box">
+            <i class="ph-lock-key-fill"></i>
+            <h3>Login Required</h3>
+            <p>You need to have an account to reserve this meal and view full details.</p>
+            <div class="modal-btns">
+                <a href="login.html" class="modal-login-btn">Go to Login</a>
+                <button class="modal-close-btn" onclick="closeModal()">Maybe Later</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Select all cafe cards
+        const cards = document.querySelectorAll('.cafe-card');
+        const modal = document.getElementById('loginModal');
+
+        // 2. Add click event to each card
+        cards.forEach(card => {
+            card.style.cursor = "pointer"; // Make it look clickable
+            card.addEventListener('click', () => {
+                modal.style.display = 'flex';
+            });
+        });
+
+        // 3. Function to close the modal
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        // 4. Close modal if user clicks outside the white box
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+
+</body>
+
+</html>

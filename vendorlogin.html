@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReServe | Vendor Login</title>
+
+ <style>
+    :root {
+      --primary-green: #2E7D32;
+      --accent-green: #66BB6A;
+      --light-green: #E8F5E9;
+      --muted: #5f6a73;
+      --bg: #ffffff;
+      --card: #f9fbf9;
+      --radius: 18px;
+      --shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background-image: url("image/login_bg.jpg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #1f1f1f;
+      padding: 16px;
+      overflow: hidden; 
+    }
+
+    .shell {
+      width: min(820px, 100%);
+      max-height: 92vh;
+      background: white;
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      position: relative;
+    }
+
+    .brand-panel {
+      background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+      color: white;
+      padding: 28px;
+      display: grid;
+      align-content: center;
+      gap: 20px;
+      position: relative;
+      padding-bottom: 100px;
+    }
+
+    .brand-panel::after {
+      content: "Vendor";
+      position: absolute;
+      bottom: 40px;
+      right: 120px;
+      padding-right: 28px;
+      font-size: 4rem;
+      font-weight: 800;
+      color: rgba(255,255,255,0.08);
+      letter-spacing: 2px;
+      text-align: right;
+      width: 100%;
+      z-index: 0;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 2.0rem;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo span { font-size: 2rem; }
+
+    .brand-panel h1 {
+      font-size: 2.1rem;
+      line-height: 1.2;
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand-panel p {
+      color: rgba(255,255,255,0.9);
+      line-height: 1.6;
+      max-width: 420px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .chips {
+  display: flex;
+  flex-direction: column; /* This stacks them vertically */
+  gap: 10px;              /* This creates space between the lines */
+  align-items: flex-start; /* This prevents the chips from stretching to full width */
+  position: relative;
+  z-index: 1;
+}
+
+    .chip {
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.25);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      color: white;
+      backdrop-filter: blur(2px);
+    }
+
+    .form-panel {
+      padding: 28px;
+      background: var(--card);
+      display: grid;
+      align-content: center;
+      gap: 20px;
+    }
+
+    .form-header h2 {
+      font-size: 1.7rem;
+      margin-bottom: 6px;
+      color: var(--primary-green);
+    }
+
+    .form-header p { color: var(--muted); }
+
+    form { display: grid; gap: 18px; }
+
+    label {
+      font-weight: 600;
+      color: #233029;
+      font-size: 0.95rem;
+    }
+
+    .input { position: relative; margin-bottom: 4px; }
+
+    input {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      border: 1px solid #dfe5df;
+      background: white;
+      font-size: 1rem;
+      color: #1f1f1f;
+      transition: border 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary-green);
+      box-shadow: 0 0 0 3px rgba(46,125,50,0.15);
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .remember {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .remember input { width: auto; box-shadow: none; border-radius: 6px; }
+
+    a.link {
+      color: var(--primary-green);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    a.link:hover { text-decoration: underline; }
+
+    .btn {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      border: none;
+      background: linear-gradient(135deg, var(--primary-green), #25712d);
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 12px 24px rgba(46,125,50,0.2);
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .divider {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .divider::before, .divider::after {
+      content: "";
+      height: 1px;
+      background: #dfe5df;
+      display: block;
+    }
+
+    .alt-actions { display: grid; gap: 12px; }
+
+    .ghost {
+      width: 100%;
+      padding: 10px 16px;
+      border-radius: var(--radius);
+      border: 1px solid #dfe5df;
+      background: white;
+      color: #1f1f1f;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .ghost:hover {
+      border-color: var(--primary-green);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 3px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .shell { grid-template-columns: 1fr; }
+      .brand-panel, .form-panel { padding: 22px; }
+      .brand-panel::after { display: none; }
+    }
+</style>
+</head>
+<body>
+  <div class="shell">
+    
+    <div class="brand-panel">
+      <div class="logo"><span>🍽️</span> ReServe</div>
+      <h1>Vendor Portal</h1>
+      <p>Manage your surplus inventory, reach more students, and track your contribution to a zero-waste campus.</p>
+      <div class="chips">
+        <span class="chip">Inventory Management</span>
+        <span class="chip">Sustainability Reports</span>
+        <span class="chip">Direct Impact</span>
+      </div>
+    </div>
+
+    <div class="form-panel">
+      <div class="form-header">
+        <h2>Vendor sign in</h2>
+        <p>Enter your store credentials to manage listings.</p>
+      </div>
+
+      <form>
+        <div class="input">
+          <label for="vendor-id">Vendor ID / Email</label>
+          <input id="vendor-id" name="vendor-id" type="text" placeholder="store-name@vendor.com" required />
+        </div>
+
+        <div class="input">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" placeholder="••••••••" required />
+          <button class="password-toggle" type="button">Show</button>
+        </div>
+
+        <div class="actions">
+          <label class="remember">
+            <input type="checkbox" name="remember" />
+            Remember me
+          </label>
+          <a class="link" href="#">Forgot password?</a>
+        </div>
+
+        <button class="btn" type="submit">Access Dashboard</button>
+      </form>
+
+      <div class="alt-actions">
+        <div class="divider">Not a vendor?</div>
+        <button class="ghost" type="button" onclick="window.location.href='login.html'">Back to Student Login</button>
+      </div>
+
+      <div class="footer-note">
+        Want to partner with us? <a class="link" href="vendorsignup.html">Apply here</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const toggle = document.querySelector(".password-toggle");
+    const password = document.querySelector("#password");
+
+    toggle?.addEventListener("click", () => {
+      const isHidden = password.type === "password";
+      password.type = isHidden ? "text" : "password";
+      toggle.textContent = isHidden ? "Hide" : "Show";
+    });
+  </script>
+</body>
+</html>
