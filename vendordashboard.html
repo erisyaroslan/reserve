@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>ReServe | Vendor Dashboard</title>
@@ -459,70 +460,15 @@
 
   <main>
     <div class="welcome-section">
-      <h1>Welcome, Vendor!</h1>
-      <p>Here’s what’s happening with your surplus today.</p>
+      <h1>Welcome, <span id="vendorNameDisplay">Vendor</span></h1>
+      <p id="vendorLocationDisplay">Here’s what’s happening with your surplus today.</p>
     </div>
 
     <div class="menu-header">
       <h2>Your Active Menu</h2>
     </div>
 
-    <div class="menu-grid">
-      <div class="menu-card">
-        <div class="menu-photo" style="background-image: url('image/nasilemak.jpg');">
-          <div class="category-badge">Hot Meal</div>
-        </div>
-        <div class="menu-details">
-          <h3>Nasi Lemak Ayam</h3>
-          <p class="menu-desc">Fragrant coconut rice with crispy chicken, spicy sambal, and hard-boiled egg.</p>
-          <div class="price-row">
-            <div><span class="old-price">RM 9.00</span><span class="price-tag">RM 4.50</span></div>
-            <span class="stock-tag">5 Left</span>
-          </div>
-          <div class="card-actions">
-            <a href="vendor-editmeals.html"><button class="btn-action edit-btn">Edit Details</button></a>
-            <button class="btn-action remove-btn">Remove</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="menu-card">
-        <div class="menu-photo" style="background-image: url('image/spaghettibolognese.webp');">
-          <div class="category-badge">Western</div>
-        </div>
-        <div class="menu-details">
-          <h3>Spaghetti Bolognese</h3>
-          <p class="menu-desc">Classic Italian beef bolognese served with al dente pasta and parmesan.</p>
-          <div class="price-row">
-            <div><span class="old-price">RM 10.00</span><span class="price-tag">RM 6.00</span></div>
-            <span class="stock-tag">2 Left</span>
-          </div>
-          <div class="card-actions">
-            <a href="vendor-editmeals.html"><button class="btn-action edit-btn">Edit Details</button></a>
-            <button class="btn-action remove-btn">Remove</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="menu-card">
-        <div class="menu-photo" style="background-image: url('image/sandwich.avif');">
-          <div class="category-badge">Snacks</div>
-        </div>
-        <div class="menu-details">
-          <h3>Egg Mayo Sandwich</h3>
-          <p class="menu-desc">Fresh wholemeal bread with creamy egg mayo filling, perfect for a quick snack.</p>
-          <div class="price-row">
-            <div><span class="old-price">RM 5.00</span><span class="price-tag">RM 3.00</span></div>
-            <span class="stock-tag">10 Left</span>
-          </div>
-          <div class="card-actions">
-            <a href="vendor-editmeals.html"><button class="btn-action edit-btn">Edit Details</button></a>
-            <button class="btn-action remove-btn">Remove</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
+    <div class="menu-grid" id="menuGrid"></div>
 
     <div class="menu-header">
       <button class="post-main-btn" onclick="window.location.href='add-menu.html'">
@@ -543,44 +489,7 @@
     </div>
   </div>
 
-  <script>
-    let cardToDelete = null;
-    const modal = document.getElementById('deleteModal');
-
-    document.querySelectorAll('.remove-btn').forEach(button => {
-      button.addEventListener('click', function () {
-        cardToDelete = this.closest('.menu-card'); // Store the card
-        modal.style.display = 'flex'; // Show modal
-      });
-    });
-
-    document.getElementById('cancelDelete').addEventListener('click', () => {
-      modal.style.display = 'none';
-      cardToDelete = null;
-    });
-
-    document.getElementById('confirmDelete').addEventListener('click', () => {
-      if (cardToDelete) {
-        cardToDelete.classList.add('fade-out');
-
-        setTimeout(() => {
-          cardToDelete.remove();
-          modal.style.display = 'none';
-
-          if (document.querySelectorAll('.menu-card').length === 0) {
-            document.querySelector('.menu-grid').innerHTML =
-              "<p style='grid-column: 1/-1; text-align: center; padding: 40px; color: var(--darker-green); font-weight: 600;'>Your menu is currently empty.</p>";
-          }
-        }, 400);
-      }
-    });
-
-    window.onclick = function (event) {
-      if (event.target == modal) {
-        modal.style.display = 'none';
-      }
-    }
-  </script>
+  <script type="module" src="vendordashboard-logic.js"></script>
 </body>
 
 </html>

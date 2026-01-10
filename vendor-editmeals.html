@@ -8,6 +8,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap"
         rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         :root {
@@ -25,7 +26,6 @@
         }
 
         body {
-            /* YOUR FANCY MESH BACKGROUND */
             background: radial-gradient(circle at 0% 0%, #2D6A4F 0%, transparent 40%),
                 radial-gradient(circle at 100% 0%, #52B788 0%, transparent 40%),
                 radial-gradient(circle at 50% 50%, #D8E2DC 0%, #B7E4C7 100%);
@@ -35,7 +35,6 @@
             flex-direction: column;
         }
 
-        /* ORIGINAL NAVBAR STYLE */
         header.dashboard {
             position: fixed;
             top: 0;
@@ -48,7 +47,6 @@
             padding: 0 5%;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             z-index: 2000;
-            /* Highest priority */
         }
 
         .back-link {
@@ -62,7 +60,6 @@
             letter-spacing: 1px;
         }
 
-        /* MAIN LAYOUT: Split View to fill the "Emptiness" */
         .edit-wrapper {
             display: grid;
             grid-template-columns: 1fr 1.2fr;
@@ -70,11 +67,9 @@
             margin: 0 auto;
             gap: 40px;
             padding: 120px 40px 60px;
-            /* Top padding accounts for 75px navbar */
             min-height: 100vh;
         }
 
-        /* LEFT SIDE: THE PREVIEW (Stops it from looking empty) */
         .preview-pane {
             position: sticky;
             top: 110px;
@@ -112,7 +107,6 @@
             padding: 20px;
         }
 
-        /* RIGHT SIDE: THE FORM */
         .form-pane {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(20px);
@@ -155,7 +149,8 @@
         }
 
         input,
-        textarea {
+        textarea,
+        select {
             width: 100%;
             padding: 15px;
             border-radius: 12px;
@@ -177,7 +172,6 @@
             gap: 20px;
         }
 
-        /* BUTTONS */
         .action-btns {
             display: flex;
             gap: 15px;
@@ -214,28 +208,19 @@
             font-size: 0.9rem;
         }
 
-        /* SUCCESS STATE */
-        .success-overlay {
-            position: absolute;
-            inset: 0;
-            background: white;
-            border-radius: 30px;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            animation: fadeIn 0.4s ease;
+        /* CUSTOM SWEETALERT STYLES (MATCHING YOUR ADD PAGE) */
+        .premium-popup {
+            border-radius: 30px !important;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
+        .premium-confirm-btn {
+            background: #2E7D32 !important;
+            color: white !important;
+            border-radius: 50px !important;
+            padding: 12px 30px !important;
+            font-weight: 600 !important;
+            cursor: pointer;
+            border: none !important;
         }
     </style>
 </head>
@@ -244,8 +229,7 @@
 
     <header class="dashboard">
         <a href="vendordashboard.html" class="back-link">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
-                stroke-linecap="round" stroke-linejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                 <line x1="19" y1="12" x2="5" y2="12"></line>
                 <polyline points="12 19 5 12 12 5"></polyline>
             </svg>
@@ -254,21 +238,21 @@
     </header>
 
     <div class="edit-wrapper">
-
         <aside class="preview-pane">
             <h3>Live Preview</h3>
             <div class="meal-card-mockup">
-                <div class="mock-img"></div>
+                <div class="mock-img" id="prevImg"></div>
                 <div class="mock-details">
-                    <p style="font-size: 0.7rem; font-weight: 800; color: var(--primary-green); margin-bottom: 5px;">HOT
-                        MEAL</p>
-                    <h4 style="font-size: 1.2rem; color: #333; margin-bottom: 10px;">Nasi Lemak Ayam</h4>
-                    <p style="font-size: 0.85rem; color: #777; margin-bottom: 15px;">Fragrant coconut rice with crispy
-                        chicken...</p>
+                    <p id="prevCat"
+                        style="font-size: 0.7rem; font-weight: 800; color: var(--primary-green); margin-bottom: 5px; text-transform: uppercase;">
+                        HOT MEAL</p>
+                    <h4 id="prevName" style="font-size: 1.2rem; color: #333; margin-bottom: 10px;">Meal Name</h4>
+                    <p id="prevDesc" style="font-size: 0.85rem; color: #777; margin-bottom: 15px;">Description
+                        preview...</p>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-weight: 800; color: var(--darker-green);">RM 4.50</span>
-                        <span
-                            style="font-size: 0.75rem; background: #E8F5E9; padding: 4px 8px; border-radius: 5px; color: var(--primary-green);">5
+                        <span id="prevNew" style="font-weight: 800; color: var(--darker-green);">RM 0.00</span>
+                        <span id="prevQty"
+                            style="font-size: 0.75rem; background: #E8F5E9; padding: 4px 8px; border-radius: 5px; color: var(--primary-green);">0
                             Left</span>
                     </div>
                 </div>
@@ -280,65 +264,83 @@
         </aside>
 
         <main class="form-pane">
-
-            <div class="success-overlay" id="success">
-                <div style="font-size: 60px;">🚀</div>
-                <h2 style="font-family: 'Playfair Display', serif; font-size: 2.2rem; margin: 20px 0 10px;">Meal
-                    Updated!</h2>
-                <p style="color: #888;">Returning you to your dashboard...</p>
-            </div>
-
             <h1>Edit Your Meal's Details</h1>
             <p class="sub-title">Update your meal information and pricing.</p>
 
-            <div class="input-section">
-                <label>Upload New Photo</label>
-                <input type="file" style="border: none; padding-left: 0;">
-            </div>
-
-            <div class="input-section">
-                <label>Meal Name</label>
-                <input type="text" value="Nasi Lemak Ayam">
-            </div>
-
-            <div class="input-section">
-                <label>Description</label>
-                <textarea
-                    rows="3">Fragrant coconut rice with crispy chicken, spicy sambal, and hard-boiled egg.</textarea>
-            </div>
-
-            <div class="price-grid input-section">
-                <div>
-                    <label>Original Price</label>
-                    <input type="text" value="RM 9.00">
+            <form id="editMealForm">
+                <div class="input-section">
+                    <label>Update Photo</label>
+                    <input type="file" id="mealImageInput" accept="image/*" onchange="updatePreviewImage(this)"
+                        style="border: none; padding-left: 0;">
                 </div>
-                <div>
-                    <label>Surplus Price</label>
-                    <input type="text" value="RM 4.50" style="color: var(--primary-green); font-weight: 800;">
+
+                <div class="input-section">
+                    <label>Meal Name</label>
+                    <input type="text" id="mealName" oninput="updatePreview()" required>
                 </div>
-            </div>
 
-            <div class="input-section">
-                <label>Available Quantity</label>
-                <input type="number" value="5">
-            </div>
+                <div class="input-section">
+                    <label>Category</label>
+                    <select id="category" onchange="updatePreview()">
+                        <option value="Hot Meal">Hot Meal</option>
+                        <option value="Snacks">Snacks</option>
+                        <option value="Western">Western</option>
+                    </select>
+                </div>
 
-            <div class="action-btns">
-                <button class="btn-save" onclick="done()">Update Meal Details</button>
-                <a href="vendordashboard.html" class="btn-discard">Discard</a>
-            </div>
+                <div class="input-section">
+                    <label>Description</label>
+                    <textarea id="description" rows="3" oninput="updatePreview()"></textarea>
+                </div>
 
+                <div class="price-grid input-section">
+                    <div>
+                        <label>Original Price (RM)</label>
+                        <input type="number" id="oldPrice" step="0.01" oninput="updatePreview()">
+                    </div>
+                    <div>
+                        <label>Surplus Price (RM)</label>
+                        <input type="number" id="newPrice" step="0.01" oninput="updatePreview()"
+                            style="color: var(--primary-green); font-weight: 800;">
+                    </div>
+                </div>
+
+                <div class="input-section">
+                    <label>Available Quantity</label>
+                    <input type="number" id="qty" oninput="updatePreview()">
+                </div>
+
+                <div class="action-btns">
+                    <button type="button" id="saveMealBtn" class="btn-save">Update Meal Details</button>
+                    <a href="vendordashboard.html" class="btn-discard">Discard</a>
+                </div>
+            </form>
         </main>
     </div>
 
     <script>
-        function done() {
-            document.getElementById('success').style.display = 'flex';
-            setTimeout(() => {
-                window.location.href = 'vendordashboard.html';
-            }, 2200);
+        // Live Preview Logic
+        function updatePreview() {
+            document.getElementById('prevName').innerText = document.getElementById('mealName').value || "Meal Name";
+            document.getElementById('prevCat').innerText = document.getElementById('category').value;
+            document.getElementById('prevDesc').innerText = document.getElementById('description').value || "Description...";
+            document.getElementById('prevNew').innerText = "RM " + parseFloat(document.getElementById('newPrice').value || 0).toFixed(2);
+            document.getElementById('prevQty').innerText = (document.getElementById('qty').value || 0) + " Left";
+        }
+
+        function updatePreviewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('prevImg').style.backgroundImage = `url(${e.target.result})`;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
         }
     </script>
+
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="editmeals-logic.js"></script>
 
 </body>
 

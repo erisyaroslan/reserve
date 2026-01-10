@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,11 +11,17 @@
       --primary-green: #2E7D32;
       --accent-green: #66BB6A;
       --muted: #5f6a73;
-      --radius: 15px; /* Slightly smaller radius to save space */
+      --radius: 15px;
+      /* Slightly smaller radius to save space */
       --shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", sans-serif; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", sans-serif;
+    }
 
     body {
       height: 100vh;
@@ -26,10 +33,10 @@
       background-position: center;
       background-repeat: no-repeat;
       /* Optional: adds a slight dark overlay to help the white box pop */
-      background-color: rgba(0, 0, 0, 0.4); 
+      background-color: rgba(0, 0, 0, 0.4);
       background-blend-mode: overlay;
-      
-      overflow: hidden; 
+
+      overflow: hidden;
       padding: 10px;
     }
 
@@ -39,7 +46,7 @@
       background: white;
       border-radius: 24px;
       /* Increased shadow to stand out against the background image */
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2); 
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
       display: grid;
       grid-template-columns: 1fr 1.3fr;
       overflow: hidden;
@@ -58,34 +65,67 @@
       gap: 10px;
     }
 
-    .logo { font-size: 1.8rem; font-weight: 800; margin-bottom: 5px; }
-    .brand-panel h1 { font-size: 1.8rem; line-height: 1.1; }
-    .brand-panel p { font-size: 0.9rem; opacity: 0.9; }
-
-    .form-panel { 
-      padding: 25px 40px; 
-      display: flex; 
-      flex-direction: column; 
-      justify-content: center; 
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 5px;
     }
 
-    .form-header { margin-bottom: 15px; }
-    .form-header h2 { font-size: 1.5rem; color: var(--primary-green); }
-    .form-header p { font-size: 0.85rem; color: var(--muted); }
-
-    form { 
-      display: grid; 
-      grid-template-columns: 1fr 1fr; 
-      gap: 10px; /* Reduced gap from 18px to 10px */
+    .brand-panel h1 {
+      font-size: 1.8rem;
+      line-height: 1.1;
     }
 
-    .full-width { grid-column: span 2; }
+    .brand-panel p {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
 
-    label { font-weight: 600; font-size: 0.75rem; color: #444; margin-bottom: 3px; display: block; }
+    .form-panel {
+      padding: 25px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
 
-    input, select {
+    .form-header {
+      margin-bottom: 15px;
+    }
+
+    .form-header h2 {
+      font-size: 1.5rem;
+      color: var(--primary-green);
+    }
+
+    .form-header p {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      /* Reduced gap from 18px to 10px */
+    }
+
+    .full-width {
+      grid-column: span 2;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 0.75rem;
+      color: #444;
+      margin-bottom: 3px;
+      display: block;
+    }
+
+    input,
+    select {
       width: 100%;
-      padding: 8px 12px; /* Slimmer inputs */
+      padding: 8px 12px;
+      /* Slimmer inputs */
       border-radius: 10px;
       border: 1.5px solid #eef2ee;
       font-size: 0.9rem;
@@ -104,25 +144,49 @@
       transition: transform 0.2s;
     }
 
-    .footer-note { 
-      grid-column: span 2; 
-      text-align: center; 
-      margin-top: 10px; 
-      font-size: 0.8rem; 
-      color: var(--muted); 
+    .footer-note {
+      grid-column: span 2;
+      text-align: center;
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: var(--muted);
     }
 
-    .link { color: var(--primary-green); text-decoration: none; font-weight: 700; }
+    .link {
+      color: var(--primary-green);
+      text-decoration: none;
+      font-weight: 700;
+    }
 
     /* Mobile handling */
     @media (max-width: 800px) {
-      .shell { grid-template-columns: 1fr; max-height: 98vh; }
-      .brand-panel { display: none; } /* Hide green panel on mobile to save vertical space */
-      .form-panel { padding: 20px; }
+      .shell {
+        grid-template-columns: 1fr;
+        max-height: 98vh;
+      }
+
+      .brand-panel {
+        display: none;
+      }
+
+      /* Hide green panel on mobile to save vertical space */
+      .form-panel {
+        padding: 20px;
+      }
     }
-</style>
+  </style>
 </head>
+
 <body>
+
+  <div id="customToast"
+    style="position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: white; padding: 15px 25px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px; z-index: 10000; transition: top 0.4s ease; border-left: 6px solid #2E7D32; min-width: 300px;">
+    <div id="toastIcon">✓</div>
+    <div>
+      <h4 id="toastTitle" style="margin:0;"></h4>
+      <p id="toastMsg" style="margin:0;"></p>
+    </div>
+  </div>
 
   <div class="shell">
     <div class="brand-panel">
@@ -137,10 +201,22 @@
         <p>Fill in the details to list your store.</p>
       </div>
 
-      <form id="signupForm">
+      <form id="vendorSignupForm">
         <div class="full-width">
           <label>Shop Name</label>
           <input type="text" id="shopName" placeholder="e.g. Science Cafe UPM" required />
+        </div>
+
+        <div>
+          <label for="location">Business Location</label>
+          <select id="location" required>
+            <option value="" disabled selected>Select location</option>
+            <option value="Main Cafeteria">Main Cafeteria</option>
+            <option value="Faculty Hub">Faculty Hub</option>
+            <option value="Block A Kiosk">Block A Kiosk</option>
+            <option value="Student Center">Student Center</option>
+            <option value="Other">Other</option>
+          </select>
         </div>
 
         <div>
@@ -153,13 +229,13 @@
           <input type="tel" id="phone" placeholder="01X-XXXXXXX" required />
         </div>
 
-        <div class="full-width">
+        <div>
           <label>Primary Category</label>
-          <select id="category">
-            <option>Hot Meals</option>
-            <option>Bakery & Snacks</option>
-            <option>Groceries</option>
-            <option>Beverages</option>
+          <select id="category" required>
+            <option value="Hot Meals">Hot Meals</option>
+            <option value="Bakery & Snacks">Bakery & Snacks</option>
+            <option value="Groceries">Groceries</option>
+            <option value="Beverages">Beverages</option>
           </select>
         </div>
 
@@ -182,27 +258,7 @@
     </div>
   </div>
 
-  <script>
-    document.getElementById('signupForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const confirm = document.getElementById('confirmPassword').value;
-
-      if(password !== confirm) {
-        alert("Passwords do not match!");
-        return;
-      }
-
-      localStorage.setItem('vendorUser', JSON.stringify({
-        email: email,
-        password: password
-      }));
-
-      alert("Account created successfully!");
-      window.location.href = 'vendorlogin.html';
-    });
-  </script>
+  <script type="module" src="vendor-signup.js"></script>
 </body>
+
 </html>

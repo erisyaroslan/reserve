@@ -1,10 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <title>ReServe | Add New Meal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Playfair+Display:wght@700;900&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
     <style>
         :root {
             --primary-green: #2E7D32;
@@ -12,12 +18,17 @@
             --darker-green: #1B4332;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
 
         body {
             background: radial-gradient(circle at 0% 0%, #2D6A4F 0%, transparent 40%),
-                        radial-gradient(circle at 100% 0%, #52B788 0%, transparent 40%),
-                        radial-gradient(circle at 50% 50%, #D8E2DC 0%, #B7E4C7 100%);
+                radial-gradient(circle at 100% 0%, #52B788 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, #D8E2DC 0%, #B7E4C7 100%);
             background-attachment: fixed;
             min-height: 100vh;
             overflow-x: hidden;
@@ -30,23 +41,29 @@
             align-items: center;
             padding: 0 5%;
             position: fixed;
-            top: 0; width: 100%; z-index: 2000;
+            top: 0;
+            width: 100%;
+            z-index: 2000;
         }
 
         .back-link {
-            text-decoration: none; color: white; font-weight: 600;
-            display: flex; align-items: center; gap: 8px; font-size: 0.75rem;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
         }
 
-        /* 1. CONTAINER SIZE & GAP */
         .edit-wrapper {
             display: grid;
             grid-template-columns: 1fr 1.2fr;
-            max-width: 1100px; /* Controls side gaps */
-            margin: 90px auto 80px; /* 80px bottom margin fixes the bottom alignment issue */
-            gap: 35px; /* Controls gap between preview and form */
+            max-width: 1100px;
+            margin: 90px auto 80px;
+            gap: 35px;
             padding: 0 20px;
-            align-items: start; /* Ensures headers are in one line */
+            align-items: start;
         }
 
         .preview-pane {
@@ -67,31 +84,28 @@
             margin-bottom: 20px;
         }
 
-        /* MARKETPLACE MESSAGE */
-        .preview-note {
-            margin-top: 15px;
-            font-size: 0.7rem;
-            color: var(--darker-green);
-            opacity: 0.7;
-            font-style: italic;
-            line-height: 1.4;
-        }
-
         .meal-card-mockup {
-            background: white; border-radius: 18px; overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1); text-align: left;
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            text-align: left;
         }
 
+        /* FIXED MOCK IMG: No more broken link */
         .mock-img {
-            width: 100%; height: 160px;
-            background: #f0f0f0 url('https://via.placeholder.com/400x250?text=Food+Image') center/cover;
+            width: 100%;
+            height: 160px;
+            background: #f0f0f0;
+            background-size: cover;
+            background-position: center;
         }
 
         .form-pane {
             background: white;
             padding: 35px;
             border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         }
 
         .form-pane h1 {
@@ -101,9 +115,12 @@
             margin-bottom: 5px;
         }
 
-        .sub-title { font-size: 0.85rem; color: #666; margin-bottom: 25px; }
+        .sub-title {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 25px;
+        }
 
-        /* FIXED FILE UPLOAD */
         .file-upload-box {
             background: #FAFAFA;
             border: 1px solid #EAEAEA;
@@ -111,40 +128,103 @@
             padding: 12px;
         }
 
-        input[type="file"] { font-size: 0.8rem; width: 100%; cursor: pointer; }
-
-        input[type="text"], input[type="number"], textarea, select {
-            width: 100%; padding: 12px; border-radius: 10px;
-            border: 1px solid #EAEAEA; background: #FAFAFA; font-size: 0.9rem;
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #EAEAEA;
+            background: #FAFAFA;
+            font-size: 0.9rem;
         }
 
-        .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .price-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
 
-        .action-btns { 
-            display: flex; gap: 12px; margin-top: 25px; 
-            padding-top: 20px; border-top: 1px solid #f5f5f5;
+        .action-btns {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #f5f5f5;
         }
 
         .btn-add {
-            flex: 2; background: var(--darker-green); color: white;
-            padding: 14px; border-radius: 12px; border: none;
-            font-weight: 700; cursor: pointer;
+            flex: 2;
+            background: var(--darker-green);
+            color: white;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
         }
 
-        /* 2. NO BORDER REMOVE BUTTON */
         .btn-remove {
-            flex: 1; 
-            background: #FFF0F0; 
+            flex: 1;
+            background: #FFF0F0;
             color: #D32F2F;
-            border-radius: 12px; 
-            display: flex; 
+            border-radius: 12px;
+            display: flex;
             align-items: center;
-            justify-content: center; 
+            justify-content: center;
             text-decoration: none;
-            font-weight: 600; 
+            font-weight: 600;
             font-size: 0.85rem;
-            border: none; /* Removed border specifically */
+            border: none;
             cursor: pointer;
+        }
+
+        /* FANCY POPUP DESIGN (UNTOUCHED AS REQUESTED) */
+        .premium-popup {
+            border-radius: 30px !important;
+            background: #ffffff !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+            border: none !important;
+        }
+
+        .premium-title {
+            font-family: 'Playfair Display', serif !important;
+            font-weight: 700 !important;
+            color: #1a3c34 !important;
+        }
+
+        .premium-confirm-btn {
+            background: #2E7D32 !important;
+            color: white !important;
+            border: none !important;
+            padding: 12px 30px !important;
+            border-radius: 50px !important;
+            font-weight: 600 !important;
+            margin: 8px !important;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .premium-cancel-btn {
+            background: #f8f9f8 !important;
+            color: #555 !important;
+            border: none !important;
+            padding: 12px 30px !important;
+            border-radius: 50px !important;
+            font-weight: 600 !important;
+            margin: 8px !important;
+            cursor: pointer;
+        }
+
+        .premium-confirm-btn:hover {
+            background: #1b5e20 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
+        }
+
+        .swal2-backdrop-show {
+            backdrop-filter: blur(10px) !important;
         }
     </style>
 </head>
@@ -164,21 +244,31 @@
         <aside class="preview-pane">
             <h3>Live Preview</h3>
             <div class="meal-card-mockup">
-                <div class="mock-img" id="prevImg"></div>
+                <div class="mock-img" id="prevImg" style="background-image: url('image/nasilemak.jpg');"></div>
                 <div class="mock-details" style="padding: 15px;">
-                    <p id="prevCat" style="font-size: 0.65rem; font-weight: 800; color: var(--primary-green); text-transform: uppercase;">CATEGORY</p>
+                    <p id="prevCat"
+                        style="font-size: 0.65rem; font-weight: 800; color: var(--primary-green); text-transform: uppercase;">
+                        SNACKS</p>
                     <h4 id="prevName" style="font-size: 1.1rem; color: #333; margin: 5px 0;">Meal Name</h4>
-                    <p id="prevDesc" style="font-size: 0.8rem; color: #777; height: 2.5em; overflow: hidden; margin-bottom: 15px;">Description preview...</p>
+                    <p id="prevDesc"
+                        style="font-size: 0.8rem; color: #777; height: 2.5em; overflow: hidden; margin-bottom: 15px;">
+                        Description preview...</p>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
-                           <span id="prevOld" style="text-decoration: line-through; color: #bbb; font-size: 0.8rem; margin-right: 5px;">RM 0.00</span>
-                           <span id="prevNew" style="font-weight: 800; color: var(--darker-green); font-size: 1.1rem;">RM 0.00</span>
+                            <span id="prevOld"
+                                style="text-decoration: line-through; color: #bbb; font-size: 0.8rem; margin-right: 5px;">RM
+                                0.00</span>
+                            <span id="prevNew"
+                                style="font-weight: 800; color: var(--darker-green); font-size: 1.1rem;">RM 0.00</span>
                         </div>
-                        <span id="prevQty" style="font-size: 0.7rem; background: #E8F5E9; padding: 4px 8px; border-radius: 5px; color: var(--primary-green);">0 Left</span>
+                        <span id="prevQty"
+                            style="font-size: 0.7rem; background: #E8F5E9; padding: 4px 8px; border-radius: 5px; color: var(--primary-green);">0
+                            Left</span>
                     </div>
                 </div>
             </div>
-            <p class="preview-note">"*This is how students will see your meal in the marketplace."</p>
+            <p style="margin-top: 15px; font-size: 0.7rem; color: #1B4332; opacity: 0.7; font-style: italic;">*This is
+                how students will see your meal.</p>
         </aside>
 
         <main class="form-pane">
@@ -187,19 +277,25 @@
 
             <form id="addMealForm">
                 <div style="margin-bottom: 18px;">
-                    <label style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">MEAL PHOTO</label>
+                    <label
+                        style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">MEAL
+                        PHOTO</label>
                     <div class="file-upload-box">
-                        <input type="file" id="imageInput" accept="image/*">
+                        <input type="file" id="mealImageInput" accept="image/*" onchange="updatePreviewImage(this)">
                     </div>
                 </div>
 
                 <div style="margin-bottom: 18px;">
-                    <label style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">MEAL NAME</label>
-                    <input type="text" id="mealName" placeholder="e.g. Egg Mayo Sandwich" oninput="updatePreview()" required>
+                    <label
+                        style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">MEAL
+                        NAME</label>
+                    <input type="text" id="mealName" placeholder="e.g. Egg Mayo Sandwich" oninput="updatePreview()"
+                        required>
                 </div>
 
                 <div style="margin-bottom: 18px;">
-                    <label style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">CATEGORY</label>
+                    <label
+                        style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">CATEGORY</label>
                     <select id="category" onchange="updatePreview()">
                         <option value="Snacks">Snacks</option>
                         <option value="Hot Meal">Hot Meal</option>
@@ -208,28 +304,36 @@
                 </div>
 
                 <div style="margin-bottom: 18px;">
-                    <label style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">DESCRIPTION</label>
-                    <textarea id="description" rows="3" placeholder="Brief description..." oninput="updatePreview()"></textarea>
+                    <label
+                        style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">DESCRIPTION</label>
+                    <textarea id="description" rows="3" placeholder="Brief description..."
+                        oninput="updatePreview()"></textarea>
                 </div>
 
                 <div class="price-grid">
                     <div style="margin-bottom: 18px;">
-                        <label style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">ORIGINAL (RM)</label>
+                        <label
+                            style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">ORIGINAL
+                            (RM)</label>
                         <input type="number" id="oldPrice" placeholder="5.00" step="0.01" oninput="updatePreview()">
                     </div>
                     <div style="margin-bottom: 18px;">
-                        <label style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">SURPLUS (RM)</label>
-                        <input type="number" id="newPrice" placeholder="3.00" step="0.01" oninput="updatePreview()" style="color: var(--primary-green); font-weight: 800;">
+                        <label
+                            style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">SURPLUS
+                            (RM)</label>
+                        <input type="number" id="newPrice" placeholder="3.00" step="0.01" oninput="updatePreview()"
+                            style="color: var(--primary-green); font-weight: 800;">
                     </div>
                 </div>
 
                 <div style="margin-bottom: 18px;">
-                    <label style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">QUANTITY</label>
+                    <label
+                        style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">QUANTITY</label>
                     <input type="number" id="qty" placeholder="10" oninput="updatePreview()">
                 </div>
 
                 <div class="action-btns">
-                    <button type="button" class="btn-add" onclick="saveMeal()">Add New Meal</button>
+                    <button type="button" class="btn-add" id="saveMealBtn">Add New Meal</button>
                     <button type="button" class="btn-remove" onclick="history.back()">Remove</button>
                 </div>
             </form>
@@ -237,6 +341,7 @@
     </div>
 
     <script>
+        // Update text previews
         function updatePreview() {
             document.getElementById('prevName').innerText = document.getElementById('mealName').value || "Meal Name";
             document.getElementById('prevCat').innerText = document.getElementById('category').value;
@@ -246,17 +351,20 @@
             document.getElementById('prevQty').innerText = (document.getElementById('qty').value || 0) + " Left";
         }
 
-        document.getElementById('imageInput').onchange = function(e) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                document.getElementById('prevImg').style.backgroundImage = `url('${reader.result}')`;
-            };
-            if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
-        };
-
-        function saveMeal() {
-            window.location.href = 'vendordashboard.html';
+        // Update image preview instantly
+        function updatePreviewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('prevImg').style.backgroundImage = `url(${e.target.result})`;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
         }
     </script>
+
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="addmenu-logic.js"></script>
 </body>
+
 </html>
