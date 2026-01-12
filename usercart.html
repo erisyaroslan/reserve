@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>ReServe | Cart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-green: #2E7D32;
+      --accent-green: #66BB6A;
+      --light-green: #E8F5E9;
+      --text-dark: #2f2f2f;
+      --muted: #777;
+      --radius: 20px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      --darker-green: #1B4332;
+      --white: #fff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: var(--light-green);
+      padding-bottom: 80px;
+    }
+
+    /* HEADER */
+    header.dashboard {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 75px;
+      background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 8%;
+      color: white;
+      z-index: 1000;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      font-weight: 800;
+    }
+
+        .nav-links a.active {
+      font-weight: 700;
+      color: #073d05;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: nowrap;
+
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+
+    .logout-btn {
+      border: 1.5px solid white;
+      padding: 8px 18px;
+      border-radius: 12px;
+      flex-shrink: 0;
+    }
+
+    .logout-btn:hover {
+      background: white;
+      color: var(--primary-green);
+    }
+
+    main {
+      padding: 100px 8% 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    h2 {
+      color: var(--darker-green);
+      margin-bottom: 20px;
+    }
+
+    /* CART ITEM */
+    .cart-item {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      gap: 15px;
+    }
+
+    .cart-photo {
+      width: 70px;
+      height: 70px;
+      border-radius: 14px;
+      background-size: cover;
+      background-position: center;
+      background-color: #eee;
+    }
+
+    .cart-info {
+      flex: 1;
+    }
+
+    .cart-info h4 {
+      margin-bottom: 5px;
+      color: var(--text-dark);
+    }
+
+    .cart-info p {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .qty-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qty-control button {
+      border: none;
+      background: var(--accent-green);
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .price {
+      font-weight: 700;
+      color: var(--darker-green);
+      margin-left: 10px;
+    }
+
+    .remove {
+      color: red;
+      cursor: pointer;
+      font-size: 0.85rem;
+      margin-left: 10px;
+    }
+
+    .total-box {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-top: 25px;
+      text-align: right;
+    }
+
+    .btn-checkout {
+      margin-top: 10px;
+      background: var(--primary-green);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-checkout:hover {
+      background: var(--darker-green);
+    }
+  </style>
+</head>
+
+<body>
+  <header class="dashboard">
+    <div class="logo">ReServe 🌱</div>
+    <nav class="nav-links">
+      <a href="userdashboard.html">Dashboard</a>
+      <a href="userbrowsemeal.html">Browse Meals</a>
+      <a href="usercart.html" class="active">Cart</a>
+      <a href="userhistory.html">History</a>
+      <a href="userprofile.html">Profile</a>
+      <a href="index.html" class="logout-btn">Logout</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>My Cart</h2>
+
+    <!-- ITEM -->
+    <div class="cart-item">
+      <div class="cart-photo" style="background-image:url('image/nasilemak.jpg')"></div>
+
+      <div class="cart-info">
+        <h4>Nasi Lemak Ayam</h4>
+        <p>Warisan Asli</p>
+      </div>
+
+      <div class="qty-control">
+        <button>-</button>
+        <span>1</span>
+        <button>+</button>
+      </div>
+
+      <span class="price">RM 4.50</span>
+      <span class="remove">Remove</span>
+    </div>
+
+    <!-- TOTAL -->
+    <div class="total-box">
+      <p><strong>Total:</strong> RM 4.50</p>
+      <button class="btn-checkout" onclick="goCheckout()">Proceed to Checkout</button>
+    </div>
+  </main>
+
+  <script>
+    function goCheckout() {
+      window.location.href = "checkout.html";
+    }
+  </script>
+
+</body>
+
+</html>

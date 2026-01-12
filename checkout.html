@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ReServe | Checkout</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #E8F5E9;
+      margin: 0;
+    }
+
+    header {
+      background: linear-gradient(135deg,#2E7D32,#66BB6A);
+      padding: 18px 8%;
+      color: white;
+      font-weight: 700;
+    }
+
+    main {
+      max-width: 800px;
+      margin: auto;
+      padding: 30px 8%;
+    }
+
+    .box {
+      background: white;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+
+    h3 {
+      margin-bottom: 12px;
+      color: #1B4332;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    .btn-pay {
+      width: 100%;
+      background: #2E7D32;
+      color: white;
+      border: none;
+      padding: 14px;
+      font-size: 1rem;
+      border-radius: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-pay:hover {
+      background: #1B4332;
+    }
+
+    .summary p {
+      margin: 6px 0;
+    }
+
+    .popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.popup-box {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.popup-box h2 {
+  color: #2E7D32;
+  margin-bottom: 10px;
+}
+
+.popup-box p {
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+  </style>
+</head>
+
+<body>
+
+<header>
+  Checkout
+</header>
+
+<main>
+
+  <!-- ORDER SUMMARY -->
+  <div class="box summary">
+    <h3>Order Summary</h3>
+    <p>Total Items: <span id="totalItems">1</span></p>
+    <p>Total Price: RM <span id="totalPrice">4.50</span></p>
+    <p><strong>Points to Earn: <span id="pointsEarn">3</span> ⭐</strong></p>
+  </div>
+
+  <!-- PAYMENT -->
+  <div class="box">
+    <h3>Payment Method</h3>
+
+    <label>
+      <input type="radio" name="payment" checked>
+      Cash on Pickup
+    </label>
+
+    <label>
+      <input type="radio" name="payment">
+      E-Wallet
+    </label>
+
+    <label>
+      <input type="radio" name="payment">
+      Online Banking
+    </label>
+  </div>
+
+  <!-- PAY BUTTON -->
+  <button class="btn-pay" onclick="confirmPayment()">Confirm & Pay</button>
+
+  <!-- SUCCESS POPUP -->
+<div class="popup-overlay" id="successPopup">
+  <div class="popup-box">
+    <h2>🎉 Payment Successful!</h2>
+    <p>You earned <strong><span id="earnedPoints">3</span> point(s)</strong>.</p>
+    <button class="btn-pay" onclick="goToOrders()">Go to My Orders</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+  let totalItems = 1;
+  let totalPrice = 4.50;
+
+  document.getElementById("totalItems").innerText = totalItems;
+  document.getElementById("totalPrice").innerText = totalPrice.toFixed(2);
+  document.getElementById("pointsEarn").innerText = totalItems;
+
+  function confirmPayment() {
+    let currentPoints = localStorage.getItem("points");
+    currentPoints = currentPoints ? parseInt(currentPoints) : 0;
+
+    let newPoints = currentPoints + totalItems;
+    localStorage.setItem("points", newPoints);
+
+    document.getElementById("earnedPoints").innerText = totalItems;
+    document.getElementById("successPopup").style.display = "flex";
+  }
+
+  function goToOrders() {
+    window.location.href = "myorders.html";
+  }
+</script>
+
+</body>
+</html>

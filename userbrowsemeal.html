@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>ReServe | Browse Meals</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-green: #2E7D32;
+      --accent-green: #66BB6A;
+      --light-green: #E8F5E9;
+      --text-dark: #2f2f2f;
+      --muted: #777;
+      --radius: 20px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      --darker-green: #1B4332;
+      --white: #fff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: var(--light-green);
+      padding-bottom: 80px;
+    }
+
+    /* HEADER */
+    header.dashboard {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 75px;
+      background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 8%;
+      color: white;
+      z-index: 1000;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+      font-family: "Playfair Display", serif;
+      font-size: 1.75rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .nav-links a.active {
+      font-weight: 700;
+      color: #073d05;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .logout-btn {
+      border: 1.5px solid white;
+      padding: 8px 18px;
+      border-radius: 12px;
+    }
+
+    .logout-btn:hover {
+      background: white;
+      color: var(--primary-green);
+    }
+
+    main {
+      padding: 100px 8% 20px;
+    }
+
+    /* SEARCH BAR */
+    .search-container {
+      margin-bottom: 20px;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      border: none;
+      font-size: 1rem;
+      box-shadow: var(--shadow);
+    }
+
+    /* CATEGORIES */
+    .category-list {
+      display: flex;
+      gap: 14px;
+      margin: 15px 0;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .category {
+      background: var(--white);
+      padding: 8px 14px;
+      border-radius: 14px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      white-space: nowrap;
+      font-weight: 600;
+      border: 2px solid transparent;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+
+    .category.active {
+      border-color: var(--primary-green);
+      color: var(--darker-green);
+    }
+
+    /* MEAL CARDS */
+    .meal-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      margin-bottom: 18px;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+
+    .meal-photo {
+      width: 80px;
+      height: 80px;
+      border-radius: var(--radius);
+      background-color: #eee;
+      background-size: cover;
+      background-position: center;
+      margin-right: 15px;
+    }
+
+    .meal-info {
+      flex: 1;
+    }
+
+    .meal-info h3 {
+      font-size: 1rem;
+      color: var(--text-dark);
+    }
+
+    .meal-info p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin: 4px 0;
+    }
+
+    .meal-info .price {
+      font-weight: 700;
+      color: var(--darker-green);
+    }
+
+    .btn-add {
+      background: var(--primary-green);
+      color: var(--white);
+      border: none;
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-add:hover {
+      background: var(--darker-green);
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="dashboard">
+    <div class="logo">ReServe 🌱</div>
+    <nav class="nav-links">
+      <a href="userdashboard.html">Dashboard</a>
+      <a href="userbrowsemeal.html" class="active">Browse Meals</a>
+      <a href="usercart.html">Cart</a>
+      <a href="userhistory.html">History</a>
+      <a href="userprofile.html">Profile</a>
+      <a href="index.html" class="logout-btn">Logout</a>
+    </nav>
+  </header>
+
+
+  <main>
+
+    <!-- SEARCH -->
+    <div class="search-container">
+      <input type="search" placeholder="Search meals..." class="search-box">
+    </div>
+
+    <!-- CATEGORIES -->
+    <div class="category-list">
+      <div class="category active" data-category="All">All</div>
+      <div class="category" data-category="Snacks">Snacks</div>
+      <div class="category" data-category="Hot Meal">Hot Meal</div>
+      <div class="category" data-category="Western">Western</div>
+    </div>
+
+    <!-- MEAL ITEMS -->
+    <div class="meal-card" data-category="Snacks">
+      <div class="meal-photo" style="background-image: url('image/sandwich.avif')"></div>
+      <div class="meal-info">
+        <h3>Egg Mayo Sandwich</h3>
+        <p class="price">RM 3.00</p>
+        <p class="meal-cat">Snacks • Cabin KTD</p>
+      </div>
+      <button class="btn-add">Add +</button>
+    </div>
+
+    <div class="meal-card" data-category="Hot Meal">
+      <div class="meal-photo" style="background-image: url('image/nasilemak.jpg')"></div>
+      <div class="meal-info">
+        <h3>Nasi Lemak Ayam</h3>
+        <p class="price">RM 4.50</p>
+        <p class="meal-cat">Hot Meal • Warisan Asli</p>
+      </div>
+      <button class="btn-add">Add +</button>
+    </div>
+
+    <div class="meal-card" data-category="Western">
+      <div class="meal-photo" style="background-image: url('image/spaghettibolognese.webp')"></div>
+      <div class="meal-info">
+        <h3>Spaghetti Bolognese</h3>
+        <p class="price">RM 6.00</p>
+        <p class="meal-cat">Western • Cafe Green</p>
+      </div>
+      <button class="btn-add">Add +</button>
+    </div>
+
+    <script>
+      const categories = document.querySelectorAll(".category");
+      const meals = document.querySelectorAll(".meal-card");
+
+      categories.forEach(category => {
+        category.addEventListener("click", () => {
+
+          // Remove active from all
+          categories.forEach(c => c.classList.remove("active"));
+          category.classList.add("active");
+
+          const selectedCategory = category.dataset.category;
+
+          meals.forEach(meal => {
+            if (selectedCategory === "All" || meal.dataset.category === selectedCategory) {
+              meal.style.display = "flex";
+            } else {
+              meal.style.display = "none";
+            }
+          });
+
+        });
+      });
+    </script>
+
+  </main>
+
+</body>
+
+</html>
