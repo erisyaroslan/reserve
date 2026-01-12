@@ -19,6 +19,7 @@
       padding: 18px 8%;
       color: white;
       font-weight: 700;
+      font-size: 1.3rem;
     }
 
     main {
@@ -38,12 +39,24 @@
     h3 {
       margin-bottom: 12px;
       color: #1B4332;
+      font-size: 1.3rem;
     }
 
     label {
       display: block;
       margin-bottom: 10px;
       cursor: pointer;
+      padding: 12px;
+      border-radius: 10px;
+      transition: background 0.2s;
+    }
+
+    label:hover {
+      background: #f5f5f5;
+    }
+
+    input[type="radio"] {
+      margin-right: 10px;
     }
 
     .btn-pay {
@@ -56,48 +69,74 @@
       border-radius: 14px;
       font-weight: 700;
       cursor: pointer;
+      transition: background 0.2s;
     }
 
     .btn-pay:hover {
       background: #1B4332;
     }
 
+    .btn-pay:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
     .summary p {
-      margin: 6px 0;
+      margin: 8px 0;
+      font-size: 1rem;
+    }
+
+    .summary p strong {
+      color: #1B4332;
     }
 
     .popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.4);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-}
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(5px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
 
-.popup-box {
-  background: white;
-  padding: 30px;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-}
+    .popup-box {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      animation: popIn 0.3s ease;
+    }
 
-.popup-box h2 {
-  color: #2E7D32;
-  margin-bottom: 10px;
-}
+    @keyframes popIn {
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
 
-.popup-box p {
-  margin-bottom: 20px;
-  font-size: 1rem;
-}
+    .popup-box h2 {
+      color: #2E7D32;
+      margin-bottom: 15px;
+      font-size: 1.8rem;
+    }
+
+    .popup-box p {
+      margin-bottom: 25px;
+      font-size: 1.1rem;
+      color: #555;
+    }
 
   </style>
 </head>
@@ -113,9 +152,8 @@
   <!-- ORDER SUMMARY -->
   <div class="box summary">
     <h3>Order Summary</h3>
-    <p>Total Items: <span id="totalItems">1</span></p>
-    <p>Total Price: RM <span id="totalPrice">4.50</span></p>
-    <p><strong>Points to Earn: <span id="pointsEarn">3</span> ⭐</strong></p>
+    <p>Total Items: <strong><span id="totalItems">0</span></strong></p>
+    <p>Total Price: <strong>RM <span id="totalPrice">0.00</span></strong></p>
   </div>
 
   <!-- PAYMENT -->
@@ -123,58 +161,27 @@
     <h3>Payment Method</h3>
 
     <label>
-      <input type="radio" name="payment" checked>
+      <input type="radio" name="payment" value="cash" checked>
       Cash on Pickup
     </label>
 
-    <label>
-      <input type="radio" name="payment">
-      E-Wallet
-    </label>
-
-    <label>
-      <input type="radio" name="payment">
-      Online Banking
-    </label>
-  </div>
 
   <!-- PAY BUTTON -->
-  <button class="btn-pay" onclick="confirmPayment()">Confirm & Pay</button>
+  <button class="btn-pay" onclick="confirmPayment()">Confirm</button>
 
   <!-- SUCCESS POPUP -->
-<div class="popup-overlay" id="successPopup">
-  <div class="popup-box">
-    <h2>🎉 Payment Successful!</h2>
-    <p>You earned <strong><span id="earnedPoints">3</span> point(s)</strong>.</p>
-    <button class="btn-pay" onclick="goToOrders()">Go to My Orders</button>
+  <div class="popup-overlay" id="successPopup">
+    <div class="popup-box">
+      <h2>🎉 Payment Successful!</h2>
+      <button class="btn-pay" onclick="goToOrders()">View My Orders</button>
+    </div>
   </div>
-</div>
 
 </main>
 
-<script>
-  let totalItems = 1;
-  let totalPrice = 4.50;
-
-  document.getElementById("totalItems").innerText = totalItems;
-  document.getElementById("totalPrice").innerText = totalPrice.toFixed(2);
-  document.getElementById("pointsEarn").innerText = totalItems;
-
-  function confirmPayment() {
-    let currentPoints = localStorage.getItem("points");
-    currentPoints = currentPoints ? parseInt(currentPoints) : 0;
-
-    let newPoints = currentPoints + totalItems;
-    localStorage.setItem("points", newPoints);
-
-    document.getElementById("earnedPoints").innerText = totalItems;
-    document.getElementById("successPopup").style.display = "flex";
-  }
-
-  function goToOrders() {
-    window.location.href = "myorders.html";
-  }
-</script>
+<!-- Firebase Scripts -->
+<script type="module" src="firebase-config.js"></script>
+<script type="module" src="checkout.js"></script>
 
 </body>
 </html>

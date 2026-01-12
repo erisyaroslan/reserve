@@ -92,37 +92,56 @@
 
     main {
       padding: 100px 8% 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: var(--darker-green);
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
     }
 
     /* ORDER CARDS */
     .order-card {
       background: var(--white);
       border-radius: var(--radius);
-      padding: 15px;
+      padding: 20px;
       margin-bottom: 18px;
       box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .order-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
     }
 
     .order-header {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 10px;
+      align-items: center;
+      margin-bottom: 15px;
       font-weight: 600;
       color: var(--darker-green);
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .order-meals {
       border-top: 1px solid #eee;
-      padding-top: 10px;
+      padding-top: 15px;
     }
 
     .meal-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      gap: 15px;
     }
 
     .meal-item p {
@@ -134,28 +153,41 @@
     .meal-item .price {
       font-weight: 700;
       color: var(--darker-green);
+      white-space: nowrap;
     }
 
     .btn-action {
       background: var(--primary-green);
       color: var(--white);
       border: none;
-      padding: 6px 12px;
+      padding: 8px 16px;
       border-radius: 12px;
       cursor: pointer;
       font-size: 0.9rem;
-      margin-left: 8px;
+      font-weight: 600;
+      transition: background 0.2s, transform 0.2s;
     }
 
     .btn-action:hover {
       background: var(--darker-green);
+      transform: translateY(-1px);
     }
 
     .order-footer {
-      margin-top: 10px;
-      text-align: right;
-      font-weight: 600;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #f0f0f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .order-footer > div:first-child {
+      font-weight: 700;
       color: var(--text-dark);
+      font-size: 1.1rem;
     }
   </style>
 </head>
@@ -176,48 +208,20 @@
   </header>
 
   <main>
-    <h2 style="margin-bottom: 20px; color: var(--darker-green);">My Orders</h2>
+    <h2>My Orders</h2>
 
-    <!-- ORDER 1 -->
-    <div class="order-card">
-      <div class="order-header">
-        <span>Order #001 - 12 Jan 2026</span>
-        <span>Status: Completed</span>
-      </div>
-      <div class="order-meals">
-        <div class="meal-item">
-          <p>Egg Mayo Sandwich</p>
-          <span class="price">RM 3.00</span>
-        </div>
-        <div class="meal-item">
-          <p>Nasi Lemak Ayam</p>
-          <span class="price">RM 4.50</span>
-        </div>
-      </div>
-      <div class="order-footer">
-        Total: RM 7.50
-      </div>
-    </div>
-
-    <!-- ORDER 2 -->
-    <div class="order-card">
-      <div class="order-header">
-        <span>Order #002 - 10 Jan 2026</span>
-        <span>Status: Completed</span>
-      </div>
-      <div class="order-meals">
-        <div class="meal-item">
-          <p>Spaghetti Bolognese</p>
-          <span class="price">RM 6.00</span>
-        </div>
-      </div>
-      <div class="order-footer">
-        Total: RM 6.00
-
+    <!-- Orders will be loaded dynamically here by JavaScript -->
+    <div id="ordersContainer">
+      <div style="text-align: center; padding: 40px; color: #777;">
+        
       </div>
     </div>
 
   </main>
+
+  <!-- Firebase Scripts -->
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="userhistory.js"></script>
 
 </body>
 

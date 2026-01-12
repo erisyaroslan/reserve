@@ -455,15 +455,15 @@
     <div class="stats-row">
       <div class="stat-box" style="border-bottom: 4px solid #E65100;">
         <p>Active Orders</p>
-        <h3 id="stat-active">3</h3>
+        <h3 id="stat-active">0</h3>
       </div>
       <div class="stat-box" style="border-bottom: 4px solid var(--primary-green);">
         <p>Completed</p>
-        <h3 id="stat-completed">12</h3>
+        <h3 id="stat-completed">0</h3>
       </div>
       <div class="stat-box" style="border-bottom: 4px solid #c62828;">
         <p>Cancelled</p>
-        <h3 id="stat-cancelled">2</h3>
+        <h3 id="stat-cancelled">0</h3>
       </div>
     </div>
 
@@ -473,141 +473,11 @@
     </div>
 
     <div id="order-container">
-      <div class="res-card" data-view="active" id="order-1">
-        <div class="student-info">
-          <h4>Rafidah</h4>
-          <p>ID: UPM12985</p>
-        </div>
-        <div class="order-details"><strong>Nasi Goreng</strong><span class="pickup-time">Pickup: Before 6:00 PM</span>
-        </div>
-        <div class="qty-column">
-          <div class="qty-label">Qty</div>
-          <div class="qty-value">1</div>
-        </div>
-        <div class="actions">
-          <button class="btn-action btn-collect" onclick="openAppModal('1', 'collected')">Collected</button>
-          <button class="btn-action btn-cancel" onclick="openAppModal('1', 'cancelled')">Cancel</button>
-        </div>
-      </div>
-
-      <div class="res-card" data-view="active" id="order-2">
-        <div class="student-info">
-          <h4>Muhammad Ariff</h4>
-          <p>ID: UPM99821</p>
-        </div>
-        <div class="order-details"><strong>Spaghetti Bolognese</strong><span class="pickup-time">Pickup: Before 5:30
-            PM</span></div>
-        <div class="qty-column">
-          <div class="qty-label">Qty</div>
-          <div class="qty-value">2</div>
-        </div>
-        <div class="actions">
-          <button class="btn-action btn-collect" onclick="openAppModal('2', 'collected')">Collected</button>
-          <button class="btn-action btn-cancel" onclick="openAppModal('2', 'cancelled')">Cancel</button>
-        </div>
-      </div>
-
-      <div class="res-card" data-view="active" id="order-3">
-        <div class="student-info">
-          <h4>Amirul Hakim</h4>
-          <p>ID: UPM55432</p>
-        </div>
-        <div class="order-details"><strong>Chicken Sandwich</strong><span class="pickup-time">Pickup: Before 4:45
-            PM</span></div>
-        <div class="qty-column">
-          <div class="qty-label">Qty</div>
-          <div class="qty-value">1</div>
-        </div>
-        <div class="actions">
-          <button class="btn-action btn-collect" onclick="openAppModal('3', 'collected')">Collected</button>
-          <button class="btn-action btn-cancel" onclick="openAppModal('3', 'cancelled')">Cancel</button>
-        </div>
-      </div>
+      <!-- Orders will be dynamically loaded here -->
     </div>
   </div>
 
-  <script>
-    let active = 3;
-    let completed = 12;
-    let cancelled = 2;
-    let pendingAction = null;
-
-    function showTab(type) {
-      document.getElementById('tab-active').classList.toggle('active', type === 'active');
-      document.getElementById('tab-history').classList.toggle('active', type === 'history');
-      document.querySelectorAll('.res-card').forEach(card => {
-        card.style.display = (card.getAttribute('data-view') === type) ? 'grid' : 'none';
-      });
-    }
-
-    // Opens the custom In-App Modal
-    function openAppModal(id, status) {
-      pendingAction = { id, status };
-      const confirmBtn = document.getElementById('modal-confirm-btn');
-
-      document.getElementById('modal-msg').innerText = `Are you sure you want to mark this reservation as ${status}?`;
-
-      // Update modal color based on action type
-      if (status === 'cancelled') {
-        confirmBtn.classList.add('is-cancel-type');
-        confirmBtn.innerText = "Yes, Cancel Order";
-      } else {
-        confirmBtn.classList.remove('is-cancel-type');
-        confirmBtn.innerText = "Yes, Collected";
-      }
-
-      document.getElementById('custom-modal').style.display = 'flex';
-    }
-
-    function closeAppModal(confirmed) {
-      document.getElementById('custom-modal').style.display = 'none';
-      if (confirmed && pendingAction) {
-        processOrder(pendingAction.id, pendingAction.status);
-      }
-      pendingAction = null;
-    }
-
-    function processOrder(id, status) {
-      const card = document.getElementById('order-' + id);
-      active--;
-
-      if (status === 'collected') {
-        completed++;
-        showAppToast("Order marked as collected!", "collected");
-      } else {
-        cancelled++;
-        showAppToast("Order has been cancelled.", "cancelled");
-      }
-
-      document.getElementById('stat-active').innerText = active;
-      document.getElementById('stat-completed').innerText = completed;
-      document.getElementById('stat-cancelled').innerText = cancelled;
-
-      card.setAttribute('data-view', 'history');
-      card.classList.add('is-history');
-
-      const actionArea = card.querySelector('.actions');
-      const labelClass = status === 'collected' ? 'label-collected' : 'label-cancelled';
-      actionArea.innerHTML = `<span class="status-label ${labelClass}">${status.toUpperCase()}</span>`;
-      card.style.display = 'none';
-    }
-
-    function showAppToast(message, type) {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      toast.className = `toast ${type === 'cancelled' ? 'toast-cancelled' : ''}`;
-
-      const icon = type === 'collected' ? 'ph-check-circle' : 'ph-x-circle';
-      toast.innerHTML = `<i class="${icon}" style="font-size:1.2rem"></i> ${message}`;
-
-      container.appendChild(toast);
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transition = '0.5s';
-        setTimeout(() => toast.remove(), 500);
-      }, 3000);
-    }
-  </script>
+  <script type="module" src="reservation.js"></script>
 </body>
 
 </html>

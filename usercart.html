@@ -55,9 +55,10 @@
       font-family: 'Playfair Display', serif;
       font-size: 1.7rem;
       font-weight: 800;
+      cursor: pointer;
     }
 
-        .nav-links a.active {
+    .nav-links a.active {
       font-weight: 700;
       color: #073d05;
     }
@@ -67,7 +68,6 @@
       gap: 16px;
       align-items: center;
       flex-wrap: nowrap;
-
     }
 
     .nav-links a {
@@ -99,6 +99,8 @@
     h2 {
       color: var(--darker-green);
       margin-bottom: 20px;
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
     }
 
     /* CART ITEM */
@@ -111,6 +113,12 @@
       align-items: center;
       margin-bottom: 15px;
       gap: 15px;
+      transition: transform 0.2s;
+    }
+
+    .cart-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
     }
 
     .cart-photo {
@@ -120,6 +128,7 @@
       background-size: cover;
       background-position: center;
       background-color: #eee;
+      flex-shrink: 0;
     }
 
     .cart-info {
@@ -129,6 +138,7 @@
     .cart-info h4 {
       margin-bottom: 5px;
       color: var(--text-dark);
+      font-size: 1.1rem;
     }
 
     .cart-info p {
@@ -151,44 +161,76 @@
       border-radius: 50%;
       cursor: pointer;
       font-weight: 700;
+      font-size: 1rem;
+      transition: background 0.2s;
+    }
+
+    .qty-control button:hover {
+      background: var(--primary-green);
+    }
+
+    .qty-control span {
+      min-width: 25px;
+      text-align: center;
+      font-weight: 600;
     }
 
     .price {
       font-weight: 700;
       color: var(--darker-green);
       margin-left: 10px;
+      font-size: 1.1rem;
+      flex-shrink: 0;
     }
 
     .remove {
-      color: red;
+      color: #d32f2f;
       cursor: pointer;
       font-size: 0.85rem;
       margin-left: 10px;
+      font-weight: 600;
+      flex-shrink: 0;
+      transition: color 0.2s;
+    }
+
+    .remove:hover {
+      color: #b71c1c;
+      text-decoration: underline;
     }
 
     .total-box {
       background: var(--white);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 20px;
+      padding: 25px;
       margin-top: 25px;
       text-align: right;
     }
 
     .btn-checkout {
-      margin-top: 10px;
+      margin-top: 15px;
       background: var(--primary-green);
       color: white;
       border: none;
-      padding: 12px 25px;
+      padding: 14px 30px;
       border-radius: 14px;
       font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
     }
 
     .btn-checkout:hover {
       background: var(--darker-green);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(46, 125, 50, 0.4);
+    }
+
+    .btn-checkout:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
     }
   </style>
 </head>
@@ -209,37 +251,22 @@
   <main>
     <h2>My Cart</h2>
 
-    <!-- ITEM -->
-    <div class="cart-item">
-      <div class="cart-photo" style="background-image:url('image/nasilemak.jpg')"></div>
-
-      <div class="cart-info">
-        <h4>Nasi Lemak Ayam</h4>
-        <p>Warisan Asli</p>
+    <!-- Cart items will be loaded here -->
+    <div id="cartContainer">
+      <div style="text-align: center; padding: 40px; color: #777;">
+        <p>Loading cart...</p>
       </div>
-
-      <div class="qty-control">
-        <button>-</button>
-        <span>1</span>
-        <button>+</button>
-      </div>
-
-      <span class="price">RM 4.50</span>
-      <span class="remove">Remove</span>
     </div>
 
-    <!-- TOTAL -->
-    <div class="total-box">
-      <p><strong>Total:</strong> RM 4.50</p>
-      <button class="btn-checkout" onclick="goCheckout()">Proceed to Checkout</button>
+    <!-- Total box -->
+    <div id="totalBox" class="total-box" style="display: none;">
+      <!-- Total will be calculated here -->
     </div>
   </main>
 
-  <script>
-    function goCheckout() {
-      window.location.href = "checkout.html";
-    }
-  </script>
+  <!-- Firebase Scripts -->
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="usercart.js"></script>
 
 </body>
 

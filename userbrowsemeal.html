@@ -221,64 +221,19 @@
       <div class="category" data-category="Western">Western</div>
     </div>
 
-    <!-- MEAL ITEMS -->
-    <div class="meal-card" data-category="Snacks">
-      <div class="meal-photo" style="background-image: url('image/sandwich.avif')"></div>
-      <div class="meal-info">
-        <h3>Egg Mayo Sandwich</h3>
-        <p class="price">RM 3.00</p>
-        <p class="meal-cat">Snacks • Cabin KTD</p>
+    <!-- MEAL ITEMS CONTAINER (Dynamic) -->
+    <div id="mealsContainer">
+      <!-- Meals will be loaded here by JavaScript -->
+      <div style="text-align: center; padding: 40px; color: #777;">
+        <p>Loading meals...</p>
       </div>
-      <button class="btn-add">Add +</button>
     </div>
-
-    <div class="meal-card" data-category="Hot Meal">
-      <div class="meal-photo" style="background-image: url('image/nasilemak.jpg')"></div>
-      <div class="meal-info">
-        <h3>Nasi Lemak Ayam</h3>
-        <p class="price">RM 4.50</p>
-        <p class="meal-cat">Hot Meal • Warisan Asli</p>
-      </div>
-      <button class="btn-add">Add +</button>
-    </div>
-
-    <div class="meal-card" data-category="Western">
-      <div class="meal-photo" style="background-image: url('image/spaghettibolognese.webp')"></div>
-      <div class="meal-info">
-        <h3>Spaghetti Bolognese</h3>
-        <p class="price">RM 6.00</p>
-        <p class="meal-cat">Western • Cafe Green</p>
-      </div>
-      <button class="btn-add">Add +</button>
-    </div>
-
-    <script>
-      const categories = document.querySelectorAll(".category");
-      const meals = document.querySelectorAll(".meal-card");
-
-      categories.forEach(category => {
-        category.addEventListener("click", () => {
-
-          // Remove active from all
-          categories.forEach(c => c.classList.remove("active"));
-          category.classList.add("active");
-
-          const selectedCategory = category.dataset.category;
-
-          meals.forEach(meal => {
-            if (selectedCategory === "All" || meal.dataset.category === selectedCategory) {
-              meal.style.display = "flex";
-            } else {
-              meal.style.display = "none";
-            }
-          });
-
-        });
-      });
-    </script>
 
   </main>
 
-</body>
+  <!-- Add Firebase scripts BEFORE closing body tag -->
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="userbrowsemeal.js"></script>
 
+</body>
 </html>

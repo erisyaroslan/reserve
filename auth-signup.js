@@ -41,20 +41,45 @@ if (signupForm) {
     e.preventDefault();
 
     // Get values from input fields
-    const email = document.getElementById('email').value;
+    const fullName = document.getElementById('fullName').value.trim();
+    const studentID = document.getElementById('studentID').value.trim();
+    const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const confirm = document.getElementById('confirmPassword').value;
     const faculty = document.getElementById('faculty').value;
 
-    // Validation 1: Passwords must match
+    // Validation 1: Check all required fields
+    if (!fullName) {
+      notify('Missing Info', 'Please enter your full name.', 'error');
+      return;
+    }
+
+    if (!studentID) {
+      notify('Missing Info', 'Please enter your student ID.', 'error');
+      return;
+    }
+
+    // Validation 2: Passwords must match
     if (password !== confirm) {
       notify('Wait a minute!', 'Your passwords do not match.', 'error');
       return;
     }
 
-    // Validation 2: Faculty must be selected
+    // Validation 3: Faculty must be selected
     if (!faculty) {
       notify('Missing Info', 'Please select your faculty.', 'error');
+      return;
+    }
+
+    // Validation 4: UPM Email
+    if (!email.endsWith('@student.upm.edu.my')) {
+      notify('Invalid Email', 'Please use your UPM student email.', 'error');
+      return;
+    }
+
+    // Validation 5: Student ID must be numeric
+    if (!/^\d+$/.test(studentID)) {
+      notify('Invalid Student ID', 'Student ID must contain only numbers.', 'error');
       return;
     }
 
@@ -65,10 +90,13 @@ if (signupForm) {
 
       // B. Save additional details to Firestore
       await setDoc(doc(db, "users", user.uid), {
+        name: fullName,
         email: email,
+        studentID: studentID,
         faculty: faculty,
         role: 'student',
-        createdAt: new Date().toISOString()
+        createdAt: new Date(),
+        profilePhotoURL: null
       });
 
       // C. Show success and redirect
@@ -84,6 +112,8 @@ if (signupForm) {
       let friendlyMsg = error.message;
       if (error.code === 'auth/email-already-in-use') friendlyMsg = "This email is already registered.";
       if (error.code === 'auth/weak-password') friendlyMsg = "Password should be at least 6 characters.";
+      if (error.code === 'auth/invalid-email') friendlyMsg = "Please enter a valid email address.";
+      if (error.code === 'auth/network-request-failed') friendlyMsg = "Network error. Please check your connection.";
 
       notify('Registration Failed', friendlyMsg, 'error');
     }
