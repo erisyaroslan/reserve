@@ -42,7 +42,7 @@ async function loadOrders() {
             });
         });
 
-        // Sort manually
+        // Sort manually: Newest first
         orders.sort((a, b) => {
             const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(0);
             const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(0);
@@ -94,25 +94,6 @@ async function checkAndExpireOrders() {
                 }
             }
         }
-        
-        const ordersQuery2 = query(
-            collection(db, "orders"),
-            where("userId", "==", currentUser.uid)
-        );
-        const snapshot2 = await getDocs(ordersQuery2);
-        const orders = [];
-        snapshot2.forEach((docSnap) => {
-            orders.push({ id: docSnap.id, ...docSnap.data() });
-        });
-        
-        orders.sort((a, b) => {
-            const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(0);
-            const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(0);
-            return dateB - dateA;
-        });
-        
-        displayOrders(orders);
-        
     } catch (error) {
         console.error('Error checking expired orders:', error);
     }
@@ -152,6 +133,7 @@ function getTimeRemaining(orderDate) {
     return { expired: false, text: `${minutes}m ${seconds}s`, minutes };
 }
 
+// FIXED: Removed status grouping to keep chronological order
 function displayOrders(orders) {
     const container = document.getElementById('ordersContainer');
     if (!container) return;
@@ -166,24 +148,14 @@ function displayOrders(orders) {
         return;
     }
 
-    const pendingOrders = orders.filter(o => o.status === 'pending');
-    const completedOrders = orders.filter(o => o.status === 'completed');
-    const cancelledOrders = orders.filter(o => o.status === 'cancelled');
-    const expiredOrders = orders.filter(o => o.status === 'expired');
-
-    container.innerHTML = [...pendingOrders, ...completedOrders, ...cancelledOrders, ...expiredOrders].map(order => 
-        createOrderCardHTML(order)
-    ).join('');
+    // Directly map sorted orders to keep them in date order
+    container.innerHTML = orders.map(order => createOrderCardHTML(order)).join('');
     
     startCountdownTimers();
 }
 
 function createOrderCardHTML(order) {
-    const orderDate = order.createdAt?.toDate ? 
-        order.createdAt.toDate().toLocaleDateString('en-GB', { 
-            day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
-        }) : 'Unknown Date';
-
+    const status = order.status || 'pending';
     const statusColors = {
         pending: { bg: '#FFF3E0', color: '#E65100', text: 'Pending Pickup' },
         completed: { bg: '#E8F5E9', color: '#2E7D32', text: 'Completed' },
@@ -191,7 +163,6 @@ function createOrderCardHTML(order) {
         expired: { bg: '#FFE0E0', color: '#B71C1C', text: 'Expired' }
     };
     
-    const status = order.status || 'pending';
     const statusStyle = statusColors[status] || statusColors.pending;
 
     let timerHTML = '';
@@ -206,20 +177,14 @@ function createOrderCardHTML(order) {
         }
     }
 
-    // UPDATED: Alert banner for both Expired and Cancelled
+    // ADDED: Green banner for Completed status
     let alertBannerHTML = '';
     if (status === 'expired') {
-        alertBannerHTML = `
-            <div class="alert-banner status-expired">
-                <p>⚠️ Order Expired</p>
-                <small>Pickup time limit exceeded. Stock has been restored.</small>
-            </div>`;
+        alertBannerHTML = `<div class="alert-banner status-expired"><p>⚠️ Order Expired</p><small>Time limit exceeded. Stock restored.</small></div>`;
     } else if (status === 'cancelled') {
-        alertBannerHTML = `
-            <div class="alert-banner status-cancelled">
-                <p>🚫 Order Cancelled</p>
-                <small>You cancelled this order. Stock has been restored to vendor.</small>
-            </div>`;
+        alertBannerHTML = `<div class="alert-banner status-cancelled"><p>🚫 Order Cancelled</p><small>This order was cancelled. Stock restored.</small></div>`;
+    } else if (status === 'completed') {
+        alertBannerHTML = `<div class="alert-banner status-completed"><p>✅ Order Completed</p><small>Thank you for rescuing this meal!</small></div>`;
     }
 
     const itemsHTML = order.items?.map(item => `
@@ -326,7 +291,6 @@ window.addEventListener('beforeunload', () => {
     if (window.countdownInterval) clearInterval(window.countdownInterval);
 });
 
-// UPDATED CSS in JS
 const style = document.createElement('style');
 style.textContent = `
     .pickup-timer { background: #FFF3E0; padding: 15px; border-radius: 12px; margin: 15px 0; text-align: center; border: 2px solid #FFE0B2; }
@@ -334,12 +298,7 @@ style.textContent = `
     .order-card { background: white; padding: 20px; border-radius: 16px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
     .btn-action { color: white; border: none; padding: 8px 16px; border-radius: 12px; cursor: pointer; font-weight: 600; }
     
-    .alert-banner {
-        padding: 12px 16px;
-        border-radius: 12px;
-        margin: 15px 0;
-        border-left: 5px solid;
-    }
+    .alert-banner { padding: 12px 16px; border-radius: 12px; margin: 15px 0; border-left: 5px solid; }
     .alert-banner p { font-weight: 700; margin: 0; font-size: 0.95rem; }
     .alert-banner small { color: #666; font-size: 0.85rem; }
     
@@ -348,5 +307,8 @@ style.textContent = `
     
     .status-cancelled { background: #FFEBEE; border-color: #C62828; }
     .status-cancelled p { color: #C62828; }
+    
+    .status-completed { background: #E8F5E9; border-color: #2E7D32; }
+    .status-completed p { color: #2E7D32; }
 `;
 document.head.appendChild(style);
