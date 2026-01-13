@@ -17,6 +17,10 @@ onAuthStateChanged(auth, (user) => {
 
 // Fetch vendor info
 async function getVendorInfo(vendorId) {
+<<<<<<< HEAD
+=======
+    // Check cache first
+>>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
     if (vendorCache[vendorId]) {
         return vendorCache[vendorId];
     }
@@ -42,13 +46,23 @@ async function getVendorInfo(vendorId) {
 async function loadCart() {
     const cart = JSON.parse(localStorage.getItem('userCart') || '[]');
     
+<<<<<<< HEAD
+=======
+    // Fetch vendor info for all items
+>>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
     for (let item of cart) {
         if (item.vendorId && !item.vendorInfo) {
             item.vendorInfo = await getVendorInfo(item.vendorId);
         }
     }
     
+<<<<<<< HEAD
     localStorage.setItem('userCart', JSON.stringify(cart));
+=======
+    // Save updated cart with vendor info
+    localStorage.setItem('userCart', JSON.stringify(cart));
+    
+>>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
     displayCart(cart);
 }
 
@@ -63,7 +77,11 @@ function displayCart(cart) {
         container.innerHTML = `
             <div style="text-align: center; padding: 60px 20px; color: #777;">
                 <div style="font-size: 3rem; margin-bottom: 15px;">🛒</div>
+<<<<<<< HEAD
                 <h3 style="font-size: 1.3rem; color: #1A1A1A; margin-bottom: 8px;">Your cart is empty</h3>
+=======
+                <h3 style="font-size: 1.3rem; color: #2f2f2f; margin-bottom: 8px;">Your cart is empty</h3>
+>>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
                 <p>Browse meals and add items to get started!</p>
                 <a href="userbrowsemeal.html" style="display: inline-block; margin-top: 20px; background: #2E7D32; color: white; padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: 600;">Browse Meals</a>
             </div>
@@ -72,15 +90,26 @@ function displayCart(cart) {
         return;
     }
 
+<<<<<<< HEAD
     const total = cart.reduce((sum, item) => sum + (parseFloat(item.discountPrice) * item.quantity), 0);
 
+=======
+    // Calculate total
+    const total = cart.reduce((sum, item) => sum + (parseFloat(item.discountPrice) * item.quantity), 0);
+
+    // Display items
+>>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
     container.innerHTML = cart.map((item, index) => {
         const vendorName = item.vendorInfo ? item.vendorInfo.shopName : 'Loading...';
         const vendorLocation = item.vendorInfo && item.vendorInfo.location ? ` • ${item.vendorInfo.location}` : '';
         
         return `
         <div class="cart-item" data-index="${index}">
+<<<<<<< HEAD
             <div class="cart-photo" style="background-image: url('${item.imageURL || 'image/placeholder.jpg'}'); background-size: cover; background-position: center;"></div>
+=======
+            <div class="cart-photo" style="background-image: url('${item.imageURL || 'image/placeholder.jpg'}')"></div>
+>>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
 
             <div class="cart-info">
                 <h4>${item.foodName}</h4>
@@ -94,11 +123,19 @@ function displayCart(cart) {
             </div>
 
             <span class="price">RM ${(parseFloat(item.discountPrice) * item.quantity).toFixed(2)}</span>
+<<<<<<< HEAD
             <span class="remove" onclick="removeItem(${index})" style="cursor: pointer;">Remove</span>
+=======
+            <span class="remove" onclick="removeItem(${index})">Remove</span>
+>>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
         </div>
         `;
     }).join('');
 
+<<<<<<< HEAD
+=======
+    // Update total
+>>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
     if (totalBox) {
         totalBox.style.display = 'block';
         totalBox.innerHTML = `
@@ -112,10 +149,18 @@ function displayCart(cart) {
 // Update quantity
 window.updateQuantity = function(index, change) {
     let cart = JSON.parse(localStorage.getItem('userCart') || '[]');
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
     if (!cart[index]) return;
 
     const newQuantity = cart[index].quantity + change;
 
+<<<<<<< HEAD
+=======
+    // Check bounds
+>>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
     if (newQuantity < 1) {
         removeItem(index);
         return;
@@ -140,24 +185,43 @@ window.removeItem = function(index) {
     showNotification('Item removed from cart', 'success');
 }
 
+<<<<<<< HEAD
 // Proceed to checkout
+=======
+// Proceed to checkout (DON'T create order yet, just go to checkout page)
+>>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
 window.proceedToCheckout = function() {
     if (!currentUser) {
         alert('Please login first!');
         return;
     }
+<<<<<<< HEAD
     const cart = JSON.parse(localStorage.getItem('userCart') || '[]');
+=======
+
+    const cart = JSON.parse(localStorage.getItem('userCart') || '[]');
+    
+>>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
     if (cart.length === 0) {
         alert('Your cart is empty!');
         return;
     }
+<<<<<<< HEAD
+=======
+
+    // Just redirect to checkout page
+    // Order will be created AFTER payment confirmation
+>>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
     window.location.href = 'checkout.html';
 }
 
 // Notification function
 function showNotification(message, type = 'success') {
     const notification = document.createElement('div');
+<<<<<<< HEAD
     notification.className = 'cart-notification';
+=======
+>>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
     notification.style.cssText = `
         position: fixed;
         top: 90px;
@@ -176,11 +240,16 @@ function showNotification(message, type = 'success') {
     document.body.appendChild(notification);
     
     setTimeout(() => {
+<<<<<<< HEAD
         notification.style.animation = 'slideOut 0.3s ease forwards';
+=======
+        notification.style.animation = 'slideOut 0.3s ease';
+>>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
         setTimeout(() => notification.remove(), 300);
     }, 2000);
 }
 
+<<<<<<< HEAD
 // Styles for Animations and Custom Checkout Button
 const style = document.createElement('style');
 style.textContent = `
@@ -222,6 +291,30 @@ style.textContent = `
     @keyframes slideOut {
         from { transform: translateX(0); opacity: 1; }
         to { transform: translateX(400px); opacity: 0; }
+=======
+// Add animation styles
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+>>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
     }
 `;
 document.head.appendChild(style);
