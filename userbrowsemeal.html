@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>ReServe | Browse Meals</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-green: #2E7D32;
+      --accent-green: #66BB6A;
+      --light-green: #F1F8E9;
+      --text-dark: #1A1A1A;
+      --muted: #627264;
+      --radius-lg: 24px;
+      --radius-sm: 14px;
+      --shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+      --darker-green: #1B4332;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: var(--light-green);
+      background-image: radial-gradient(circle at top right, #E8F5E9 0%, #F1F8E9 100%);
+      padding-bottom: 80px;
+    }
+
+    /* HEADER (Matches Browse, Cart, History) */
+    header.dashboard {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 80px;
+      background: rgba(46, 125, 50, 0.9);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 8%;
+      color: white;
+      z-index: 1000;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .logo {
+      font-family: "Playfair Display", serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(to right, #fff, #C8E6C9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      position: relative;
+    }
+
+    .nav-links a.active {
+      color: white;
+      font-weight: 700;
+    }
+
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--accent-green);
+      border-radius: 2px;
+    }
+
+    .logout-btn {
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      padding: 8px 20px;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      transition: all 0.3s;
+    }
+
+    .logout-btn:hover {
+      background: white;
+      color: var(--primary-green);
+    }
+
+    main {
+      padding: 120px 8% 40px;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    /* SEARCH & CATEGORIES */
+    .search-box {
+      width: 100%;
+      padding: 16px 24px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(46, 125, 50, 0.1);
+      font-size: 1rem;
+      box-shadow: var(--shadow);
+      outline: none;
+    }
+
+    .category-list {
+      display: flex;
+      gap: 12px;
+      margin: 25px 0;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      scrollbar-width: none;
+    }
+
+    .category {
+      background: var(--white);
+      padding: 10px 22px;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .category.active {
+      background: var(--primary-green);
+      color: white;
+    }
+
+    /* MEAL CARDS */
+    .meal-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      margin-bottom: 20px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: transform 0.3s ease;
+    }
+
+    .meal-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .meal-photo {
+      width: 100px;
+      height: 100px;
+      border-radius: 18px;
+      background-size: cover;
+      background-position: center;
+      margin-right: 22px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .meal-info {
+      flex: 1;
+      margin-right: 25px;
+      /* Creates clear space for the button */
+    }
+
+    .meal-info h3 {
+      font-size: 1.25rem;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .meal-info p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      text-align: justify;
+      line-height: 1.5;
+      margin-bottom: 10px;
+      max-width: 500px;
+    }
+
+    .meal-info .price {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--primary-green);
+    }
+
+    .btn-add {
+      background: linear-gradient(135deg, var(--primary-green), var(--darker-green));
+      color: var(--white);
+      border: none;
+      width: 80px;
+      height: 42px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 4px 15px rgba(46, 125, 50, 0.25);
+      margin-right: 40px;
+    }
+
+    .btn-add:hover {
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 0 6px 20px rgba(46, 125, 50, 0.35);
+      background: var(--primary-green);
+    }
+
+    .btn-add:active {
+      transform: scale(0.9);
+      box-shadow: 0 2px 10px rgba(46, 125, 50, 0.2);
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="dashboard">
+    <div class="logo">ReServe 🌱</div>
+    <nav class="nav-links">
+      <a href="userdashboard.html">Dashboard</a>
+      <a href="userbrowsemeal.html" class="active">Browse Meals</a>
+      <a href="usercart.html">Cart</a>
+      <a href="userhistory.html">History</a>
+      <a href="userprofile.html">Profile</a>
+      <a href="index.html" class="logout-btn">Logout</a>
+    </nav>
+  </header>
+
+
+  <main>
+
+    <!-- SEARCH -->
+    <div class="search-container">
+      <input type="search" placeholder="Search meals..." class="search-box">
+    </div>
+
+    <!-- CATEGORIES -->
+    <div class="category-list">
+      <div class="category active" data-category="All">All</div>
+      <div class="category" data-category="Snacks">Snacks</div>
+      <div class="category" data-category="Hot Meal">Hot Meal</div>
+      <div class="category" data-category="Western">Western</div>
+    </div>
+
+    <!-- MEAL ITEMS CONTAINER (Dynamic) -->
+    <div id="mealsContainer">
+      <!-- Meals will be loaded here by JavaScript -->
+      <div style="text-align: center; padding: 40px; color: #777;">
+        <p>Loading meals...</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Add Firebase scripts BEFORE closing body tag -->
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="userbrowsemeal.js"></script>
+
+</body>
+
+</html>

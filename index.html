@@ -8,17 +8,19 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap"
     rel="stylesheet">
 
   <style>
     :root {
       --primary-green: #2E7D32;
       --accent-green: #66BB6A;
-      --light-green: #E8F5E9;
-      --text-dark: #2f2f2f;
-      --bg: #F5FBF6;
-      --radius: 18px;
+      --light-green: #F1F8E9;
+      --text-dark: #1A1A1A;
+      --muted: #627264;
+      --white: #ffffff;
+      --radius-lg: 24px;
+      --shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
     }
 
     * {
@@ -32,337 +34,72 @@
     }
 
     body {
-      background-color: #F5FBF6;
-      color: var(--text-dark);
-      line-height: 1.6;
-      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-      overflow-x: hidden;
-      position: relative;
+      background: radial-gradient(circle at 0% 0%, #88c3a8 0%, transparent 40%),
+        radial-gradient(circle at 100% 0%, #52B788 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, #D8E2DC 0%, #B7E4C7 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      font-family: "Inter", sans-serif;
     }
 
-    /* ===== BACKGROUND IMAGE ===== */
-    .bg-image {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -2;
-      background-image: url('image/home_pic2.png');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      opacity: 0.15;
-      filter: blur(1px);
-    }
-
-    .bg-image::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, rgba(46, 125, 50, 0.25), rgba(102, 187, 106, 0.2));
-      mix-blend-mode: overlay;
-    }
-
-    /* ===== FANCY ANIMATED BACKGROUND ===== */
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      background:
-        /* Base light green with more green tint */
-        rgba(232, 245, 233, 0.4),
-        /* Animated mesh gradient */
-        radial-gradient(circle at 20% 30%, rgba(102, 187, 106, 0.3) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(200, 230, 201, 0.35) 0%, transparent 50%),
-        radial-gradient(circle at 50% 50%, rgba(76, 175, 80, 0.2) 0%, transparent 60%),
-        /* Subtle dot texture */
-        radial-gradient(rgba(0, 0, 0, 0.02) 0.8px, transparent 0.8px);
-      background-size:
-        100% 100%,
-        100% 100%,
-        100% 100%,
-        100% 100%,
-        24px 24px;
-      animation: backgroundShift 20s ease-in-out infinite;
-    }
-
-    @keyframes backgroundShift {
-
-      0%,
-      100% {
-        background-position:
-          0% 0%,
-          100% 100%,
-          50% 50%,
-          0 0;
-      }
-
-      50% {
-        background-position:
-          100% 100%,
-          0% 0%,
-          50% 50%,
-          0 0;
-      }
-    }
-
-    /* Floating orbs */
-    body::after {
-      content: '';
-      position: fixed;
-      width: 500px;
-      height: 500px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(102, 187, 106, 0.2), rgba(102, 187, 106, 0));
-      filter: blur(80px);
-      top: -250px;
-      left: -250px;
-      animation: floatOrb1 25s ease-in-out infinite;
-      z-index: -1;
-    }
-
-    @keyframes floatOrb1 {
-
-      0%,
-      100% {
-        transform: translate(0, 0) scale(1);
-      }
-
-      33% {
-        transform: translate(100px, 150px) scale(1.2);
-      }
-
-      66% {
-        transform: translate(-50px, 200px) scale(0.9);
-      }
-    }
-
-    /* Additional floating shapes */
-    .bg-orb-1,
-    .bg-orb-2,
-    .bg-orb-3,
-    .bg-orb-4 {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(60px);
-      z-index: -1;
-      pointer-events: none;
-    }
-
-    .bg-orb-1 {
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(200, 230, 201, 0.25), rgba(200, 230, 201, 0));
-      top: 10%;
-      right: 10%;
-      animation: floatOrb2 30s ease-in-out infinite;
-    }
-
-    .bg-orb-2 {
-      width: 350px;
-      height: 350px;
-      background: radial-gradient(circle, rgba(76, 175, 80, 0.2), rgba(76, 175, 80, 0));
-      bottom: 15%;
-      left: 5%;
-      animation: floatOrb3 35s ease-in-out infinite;
-    }
-
-    .bg-orb-3 {
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, rgba(102, 187, 106, 0.18), rgba(102, 187, 106, 0));
-      top: 60%;
-      right: 20%;
-      animation: floatOrb4 28s ease-in-out infinite;
-    }
-
-    .bg-orb-4 {
-      width: 450px;
-      height: 450px;
-      background: radial-gradient(circle, rgba(129, 199, 132, 0.22), rgba(129, 199, 132, 0));
-      bottom: 5%;
-      right: 30%;
-      animation: floatOrb5 32s ease-in-out infinite;
-    }
-
-    @keyframes floatOrb2 {
-
-      0%,
-      100% {
-        transform: translate(0, 0) scale(1);
-        opacity: 0.6;
-      }
-
-      50% {
-        transform: translate(-80px, -100px) scale(1.3);
-        opacity: 0.8;
-      }
-    }
-
-    @keyframes floatOrb3 {
-
-      0%,
-      100% {
-        transform: translate(0, 0) scale(1);
-        opacity: 0.5;
-      }
-
-      50% {
-        transform: translate(120px, -80px) scale(1.2);
-        opacity: 0.7;
-      }
-    }
-
-    @keyframes floatOrb4 {
-
-      0%,
-      100% {
-        transform: translate(0, 0) scale(1);
-        opacity: 0.4;
-      }
-
-      50% {
-        transform: translate(-60px, 100px) scale(1.1);
-        opacity: 0.6;
-      }
-    }
-
-    @keyframes floatOrb5 {
-
-      0%,
-      100% {
-        transform: translate(0, 0) scale(1);
-        opacity: 0.5;
-      }
-
-      50% {
-        transform: translate(100px, -120px) scale(1.25);
-        opacity: 0.7;
-      }
-    }
-
-    /* Geometric pattern overlay */
-    .bg-pattern {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      opacity: 0.03;
-      background-image:
-        linear-gradient(30deg, rgba(46, 125, 50, 0.1) 12%, transparent 12.5%, transparent 87%, rgba(46, 125, 50, 0.1) 87.5%, rgba(46, 125, 50, 0.1)),
-        linear-gradient(150deg, rgba(46, 125, 50, 0.1) 12%, transparent 12.5%, transparent 87%, rgba(46, 125, 50, 0.1) 87.5%, rgba(46, 125, 50, 0.1)),
-        linear-gradient(30deg, rgba(46, 125, 50, 0.1) 12%, transparent 12.5%, transparent 87%, rgba(46, 125, 50, 0.1) 87.5%, rgba(46, 125, 50, 0.1)),
-        linear-gradient(150deg, rgba(46, 125, 50, 0.1) 12%, transparent 12.5%, transparent 87%, rgba(46, 125, 50, 0.1) 87.5%, rgba(46, 125, 50, 0.1));
-      background-size: 80px 140px;
-      background-position: 0 0, 0 0, 40px 70px, 40px 70px;
-      pointer-events: none;
-    }
-
-    /* ===== DASHBOARD HEADER  ===== */
+    /* ===== CONSISTENT HEADER ===== */
     header.dashboard {
       position: fixed;
       top: 0;
       width: 100%;
-      height: 75px;
-      background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
-      backdrop-filter: blur(10px);
+      height: 80px;
+      background: rgba(46, 125, 50, 0.9);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 0 8%;
       color: white;
       z-index: 1000;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    header.dashboard::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, rgba(46, 125, 50, 0.95), rgba(102, 187, 106, 0.95));
-      z-index: -1;
-    }
-
-    .dashboard .logo {
-      font-size: 1.75rem;
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
       font-weight: 800;
-      letter-spacing: -0.5px;
-      font-family: "Playfair Display", serif;
-      background: linear-gradient(135deg, #ffffff, rgba(255, 255, 255, 0.95));
+      background: linear-gradient(to right, #fff, #C8E6C9);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      background-clip: text;
-      transition: transform 0.3s ease;
       cursor: pointer;
     }
 
-    .dashboard .logo:hover {
-      transform: scale(1.05);
-    }
-
-    .dashboard nav {
+    nav {
       display: flex;
-      gap: 8px;
+      gap: 15px;
     }
 
-    .dashboard nav a {
-      padding: 10px 20px;
+    nav a {
+      color: white;
       text-decoration: none;
-      color: rgba(255, 255, 255, 0.95);
       font-weight: 500;
       font-size: 0.95rem;
+      padding: 8px 16px;
       border-radius: 12px;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
+      transition: all 0.3s ease;
     }
 
-    .dashboard nav a::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+    nav a:hover {
       background: rgba(255, 255, 255, 0.15);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      border-radius: 12px;
-    }
-
-    .dashboard nav a:hover::before {
-      opacity: 1;
-    }
-
-    .dashboard nav a:hover {
       transform: translateY(-2px);
-      color: #ffffff;
     }
 
-    /* Push content below dashboard */
+    /* ===== MAIN CONTENT ===== */
     main {
-      padding-top: 120px;
-      animation: fadeInUp 0.8s ease-out;
+      padding-top: 140px;
+      animation: fadeIn 0.8s ease-out;
     }
 
-    @keyframes fadeInUp {
+    @keyframes fadeIn {
       from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(10px);
       }
 
       to {
@@ -371,370 +108,140 @@
       }
     }
 
-    /* ===== HERO  ===== */
+    /* ===== HERO SECTION ===== */
     .hero {
-      padding: 60px 8% 60px;
+      padding: 40px 8% 80px;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.1fr 0.9fr;
       align-items: center;
       gap: 60px;
-      position: relative;
-    }
-
-    .hero>div:first-child {
-      animation: fadeInLeft 0.8s ease-out 0.2s both;
-    }
-
-    @keyframes fadeInLeft {
-      from {
-        opacity: 0;
-        transform: translateX(-30px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
     }
 
     .hero h1 {
-      font-size: 3.5rem;
-      margin-bottom: 24px;
-      font-weight: 800;
-      line-height: 1.2;
-      letter-spacing: -1px;
-      color: var(--text-dark);
+      font-family: 'Playfair Display', serif;
+      font-size: 4rem;
+      line-height: 1.1;
+      color: #1B4332;
+      margin-bottom: 25px;
     }
 
     .hero h1 span {
-      background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      display: inline-block;
-      animation: gradientShift 3s ease infinite;
-      background-size: 200% 200%;
-    }
-
-    @keyframes gradientShift {
-
-      0%,
-      100% {
-        background-position: 0% 50%;
-      }
-
-      50% {
-        background-position: 100% 50%;
-      }
+      color: var(--primary-green);
+      font-style: italic;
     }
 
     .hero p {
-      color: rgba(47, 47, 47, 0.85);
-      max-width: 520px;
-      margin-bottom: 36px;
-      text-align: justify;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
+      color: var(--muted);
       line-height: 1.8;
-      font-weight: 400;
+      margin-bottom: 40px;
+      max-width: 550px;
     }
 
     .hero-buttons {
       display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
+      gap: 20px;
     }
 
-    .hero-buttons button {
-      padding: 16px 32px;
-      border-radius: 14px;
+    /* Primary Button: Gradient Fill */
+    .primary-btn {
+      background: linear-gradient(135deg, var(--primary-green), #1B4332);
+      color: white;
+      padding: 18px 35px;
+      border-radius: 18px;
       border: none;
-      font-size: 1.05rem;
-      font-weight: 600;
+      font-weight: 700;
+      font-size: 1rem;
       cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-      letter-spacing: 0.3px;
+      box-shadow: 0 10px 25px rgba(46, 125, 50, 0.2);
+      transition: all 0.3s ease;
     }
 
-    .hero-buttons button::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.2);
-      transform: translate(-50%, -50%);
-      transition: width 0.6s, height 0.6s;
+    .primary-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(46, 125, 50, 0.3);
     }
 
-    .hero-buttons button:hover::before {
-      width: 300px;
-      height: 300px;
+    /* Secondary Button: White fill, Green stroke (Match Cart Checkout button) */
+    .secondary-btn {
+      background: var(--white);
+      color: var(--text-dark);
+      border: 2px solid var(--primary-green);
+      padding: 18px 35px;
+      border-radius: 18px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
 
-    .hero-buttons button:hover {
-      transform: translateY(-4px) scale(1.02);
-    }
-
-    .hero-buttons button:active {
-      transform: translateY(-2px) scale(0.98);
-    }
-
-    .hero-image {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      animation: fadeInRight 0.8s ease-out 0.4s both;
-    }
-
-    @keyframes fadeInRight {
-      from {
-        opacity: 0;
-        transform: translateX(30px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    .hero-image::before {
-      content: '';
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      max-width: 450px;
-      max-height: 450px;
-      background: linear-gradient(135deg, rgba(102, 187, 106, 0.2), rgba(200, 230, 201, 0.3));
-      border-radius: 50%;
-      filter: blur(60px);
-      z-index: -1;
-      animation: pulse 4s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-
-      0%,
-      100% {
-        transform: scale(1);
-        opacity: 0.6;
-      }
-
-      50% {
-        transform: scale(1.1);
-        opacity: 0.8;
-      }
+    .secondary-btn:hover {
+      background: #f0fdf4;
+      transform: translateY(-3px);
     }
 
     .hero-image img {
       width: 100%;
-      max-width: 450px;
-      height: auto;
-      border-radius: 24px;
-      filter: drop-shadow(0 20px 60px rgba(46, 125, 50, 0.25));
-      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      z-index: 1;
+      border-radius: 30px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+      transition: transform 0.5s ease;
     }
 
     .hero-image img:hover {
-      transform: scale(1.05) rotate(1deg);
-      filter: drop-shadow(0 25px 70px rgba(46, 125, 50, 0.35));
+      transform: scale(1.02) rotate(1deg);
     }
 
-    .leaf {
-      position: absolute;
-      bottom: 30px;
-      right: 30px;
-      font-size: 2rem;
-      opacity: 0.5;
-      animation: float 3s ease-in-out infinite;
-      z-index: 2;
-    }
-
-    @keyframes float {
-
-      0%,
-      100% {
-        transform: translateY(0) rotate(0deg);
-      }
-
-      50% {
-        transform: translateY(-15px) rotate(5deg);
-      }
-    }
-
-    .primary-btn {
-      background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
-      color: white;
-      box-shadow: 0 8px 24px rgba(46, 125, 50, 0.35);
-    }
-
-    .primary-btn:hover {
-      background: linear-gradient(135deg, #1B5E20, #4CAF50);
-      box-shadow: 0 12px 32px rgba(46, 125, 50, 0.45);
-    }
-
-    .secondary-btn {
-      background-color: #F5FBF6;
-      color: var(--primary-green);
-      border: 2px solid rgba(46, 125, 50, 0.2);
-      box-shadow: 0 8px 24px rgba(46, 125, 50, 0.12);
-    }
-
-    .secondary-btn:hover {
-      background-color: rgba(232, 245, 233, 0.8);
-      border-color: var(--accent-green);
-      box-shadow: 0 12px 32px rgba(46, 125, 50, 0.2);
-    }
-
-    /* ===== HERO CARD ===== */
-    .hero-card {
-      background: var(--light-green);
-      border-radius: 30px;
-      padding: 40px;
-      text-align: center;
-      color: var(--primary-green);
-      font-size: 1.2rem;
-    }
-
-    /* ===== FEATURES ===== */
+    /* ===== FEATURES SECTION ===== */
     .features {
-      padding: 40px 8% 100px;
-      background: transparent;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .features::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(to right, transparent, rgba(46, 125, 50, 0.2), transparent);
-    }
-
-    .features::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 200px;
-      background: linear-gradient(to top, rgba(232, 245, 233, 0.15), transparent);
-      pointer-events: none;
+      padding: 100px 8%;
     }
 
     .features h2 {
+      font-family: 'Playfair Display', serif;
       text-align: center;
+      font-size: 2.8rem;
+      color: #1B4332;
       margin-bottom: 60px;
-      font-size: 2.5rem;
-      font-weight: 800;
-      color: var(--text-dark);
-      letter-spacing: -0.5px;
-    }
-
-    .features h2::after {
-      content: "";
-      display: block;
-      width: 80px;
-      height: 5px;
-      background: linear-gradient(to right, var(--primary-green), var(--accent-green));
-      margin: 16px auto 0;
-      border-radius: 10px;
-      animation: expandWidth 0.8s ease-out 0.5s both;
-    }
-
-    @keyframes expandWidth {
-      from {
-        width: 0;
-      }
-
-      to {
-        width: 80px;
-      }
     }
 
     .feature-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 32px;
-      max-width: 1200px;
-      margin: 0 auto;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
     }
 
+    /* Cards matching Checkout/Cart style */
     .feature-card {
-      background: rgba(245, 251, 246, 0.4);
-      backdrop-filter: blur(8px);
-      border-radius: 24px;
-      padding: 40px 35px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      border: 1px solid rgba(46, 125, 50, 0.15);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .feature-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(to right, var(--primary-green), var(--accent-green));
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.4s ease;
-    }
-
-    .feature-card:hover::before {
-      transform: scaleX(1);
+      background: var(--white);
+      padding: 40px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: all 0.4s ease;
+      text-align: center;
     }
 
     .feature-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 50px rgba(46, 125, 50, 0.15);
-      border-color: rgba(46, 125, 50, 0.2);
+      transform: translateY(-10px);
+      border-color: var(--accent-green);
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      display: block;
     }
 
     .feature-card h3 {
-      color: var(--primary-green);
-      margin-bottom: 16px;
+      font-family: 'Playfair Display', serif;
       font-size: 1.6rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .feature-card h3::before {
-      content: '✨';
-      font-size: 1.4rem;
-      opacity: 0.8;
-    }
-
-    .feature-card:nth-child(2) h3::before {
-      content: '🌱';
-    }
-
-    .feature-card:nth-child(3) h3::before {
-      content: '🏫';
+      color: var(--primary-green);
+      margin-bottom: 15px;
     }
 
     .feature-card p {
-      color: rgba(47, 47, 47, 0.8);
-      font-size: 1rem;
-      text-align: justify;
+      color: var(--muted);
       line-height: 1.7;
-      font-weight: 400;
     }
 
     /* ===== FOOTER ===== */
@@ -772,86 +279,36 @@
       opacity: 0.6;
     }
 
-    /* Responsiveness */
-    @media (max-width: 600px) {
-      .reserve-footer {
-        padding: 40px 5%;
-      }
-    }
-
-    /* ===== RESPONSIVE ===== */
+    /* Responsive */
     @media (max-width: 900px) {
       .hero {
         grid-template-columns: 1fr;
         text-align: center;
-        padding: 60px 8% 80px;
-        gap: 40px;
       }
 
       .hero h1 {
-        font-size: 2.5rem;
+        font-size: 3rem;
       }
 
       .hero p {
         margin: 0 auto 30px;
-        text-align: center;
       }
 
       .hero-buttons {
         justify-content: center;
       }
 
-      .dashboard nav {
-        gap: 4px;
+      nav {
+        display: none;
       }
 
-      .dashboard nav a {
-        padding: 8px 12px;
-        font-size: 0.85rem;
-      }
-
-      .features h2 {
-        font-size: 2rem;
-      }
-
-      .feature-grid {
-        grid-template-columns: 1fr;
-        gap: 24px;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .dashboard {
-        padding: 0 5%;
-      }
-
-      .dashboard .logo {
-        font-size: 1.4rem;
-      }
-
-      .dashboard nav a {
-        padding: 6px 10px;
-        font-size: 0.8rem;
-      }
-
-      .hero h1 {
-        font-size: 2rem;
-      }
-
-      .hero-buttons button {
-        padding: 14px 24px;
-        font-size: 0.95rem;
-      }
+      /* Simplified for mobile */
     }
   </style>
 </head>
 
 <body>
 
-  <!-- BACKGROUND IMAGE -->
-  <div class="bg-image"></div>
-
-  <!-- DASHBOARD -->
   <header class="dashboard">
     <div class="logo">ReServe 🌱</div>
     <nav>
@@ -862,156 +319,61 @@
     </nav>
   </header>
 
-  <!-- BACKGROUND DECORATIVE ELEMENTS -->
-  <div class="bg-orb-1"></div>
-  <div class="bg-orb-2"></div>
-  <div class="bg-orb-3"></div>
-  <div class="bg-orb-4"></div>
-  <div class="bg-pattern"></div>
-
-  <!-- BODY (FROM FIRST CODE) -->
   <main>
-
-    <!-- HERO -->
     <section class="hero">
       <div>
-        <h1>Save Food. <span>Save Money.</span></h1>
+        <h1>Save Food. <br><span>Save Money.</span></h1>
         <p>
-          Discover surplus meals around your campus, save money,
-          and help reduce food waste — all in one place. Every purchase helps minimize
-          waste while supporting a more sustainable campus lifestyle.
+          Discover surplus meals around your campus, save money, and help reduce food waste.
+          Every purchase supports a sustainable campus lifestyle.
         </p>
 
         <div class="hero-buttons">
-          <a href="meals.html"><button class="primary-btn">Find Meals</button></a>
-          <a href="vendorlogin.html"><button class="secondary-btn">Become a Vendor</button></a>
+          <button class="primary-btn" onclick="location.href='meals.html'">Find Meals</button>
+          <button class="secondary-btn" onclick="location.href='vendorlogin.html'">Become a Vendor</button>
         </div>
       </div>
 
       <div class="hero-image">
         <img src="image/home_pic.png" alt="Home Page Photo">
-        <span class="leaf">🌱</span>
       </div>
     </section>
 
-    <!-- FEATURES -->
     <section class="features">
       <h2>Why ReServe?</h2>
 
       <div class="feature-grid">
         <div class="feature-card">
+          <span class="feature-icon">💰</span>
           <h3>Affordable Meals</h3>
-          <p>Get quality meals at lower prices, making it easier for students to enjoy nutritious
-            food without straining their limited budgets. By offering discounted surplus meals,
-            ReServe helps students manage daily expenses while still eating well.</p>
+          <p>Get quality meals at lower prices, making it easier for students to enjoy nutritious food without straining
+            budgets.</p>
         </div>
 
         <div class="feature-card">
+          <span class="feature-icon">🌍</span>
           <h3>Reduce Food Waste</h3>
-          <p>Help vendors sell surplus food instead of throwing it away,
-            addressing food waste challenges within the campus community.
-            ReServe enables vendors to efficiently redistribute excess
-            meals while promoting responsible consumption.</p>
+          <p>Help vendors sell surplus food instead of throwing it away, addressing waste challenges in our campus
+            community.</p>
         </div>
 
         <div class="feature-card">
+          <span class="feature-icon">🏫</span>
           <h3>Campus Focused</h3>
-          <p>Designed for university students and nearby food vendors, ensuring the
-            platform meets the specific needs of the campus community. ReServe creates
-            a convenient and trusted space for local food exchange within a close and familiar environment.</p>
+          <p>Specifically designed for university students and local vendors, creating a trusted space for food
+            exchange.</p>
         </div>
       </div>
     </section>
-
   </main>
 
-  <!-- FOOTER -->
-  <footer class="reserve-footer">
-    <div class="footer-content">
-      <p class="footer-tagline">Eat Smart • Live Green</p>
-      <div class="footer-copyright">© 2026 ReServe. All rights reserved.</div>
-    </div>
-  </footer>
-
-  <script>
-    // Header scroll effect
-    window.addEventListener('scroll', () => {
-      const header = document.querySelector('.dashboard');
-      if (window.scrollY > 50) {
-        header.style.boxShadow = '0 12px 40px rgba(0,0,0,0.18)';
-        header.style.height = '70px';
-      } else {
-        header.style.boxShadow = '0 8px 32px rgba(0,0,0,0.12)';
-        header.style.height = '75px';
-      }
-    });
-
-    // Smooth reveal animation for feature cards on scroll
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry, index) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-          }, index * 150);
-        }
-      });
-    }, observerOptions);
-
-    // Apply to feature cards
-    document.querySelectorAll('.feature-card').forEach((card) => {
-      card.style.opacity = '0';
-      card.style.transform = 'translateY(30px)';
-      card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-      observer.observe(card);
-    });
-
-    // Button click ripple effect
-    document.querySelectorAll('button').forEach(button => {
-      button.addEventListener('click', function (e) {
-        const ripple = document.createElement('span');
-        const rect = this.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        const x = e.clientX - rect.left - size / 2;
-        const y = e.clientY - rect.top - size / 2;
-
-        ripple.style.width = ripple.style.height = size + 'px';
-        ripple.style.left = x + 'px';
-        ripple.style.top = y + 'px';
-        ripple.classList.add('ripple');
-
-        this.appendChild(ripple);
-
-        setTimeout(() => ripple.remove(), 600);
-      });
-    });
-  </script>
-
-  <style>
-    .ripple {
-      position: absolute;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.6);
-      transform: scale(0);
-      animation: ripple-animation 0.6s ease-out;
-      pointer-events: none;
-    }
-
-    @keyframes ripple-animation {
-      to {
-        transform: scale(4);
-        opacity: 0;
-      }
-    }
-  </style>
+ <footer class="reserve-footer">
+        <div class="footer-content">
+            <p class="footer-tagline">Eat Smart • Live Green</p>
+            <div class="footer-copyright">© 2026 ReServe. All rights reserved.</div>
+        </div>
+    </footer>
 
 </body>
-
-</html>
 
 </html>

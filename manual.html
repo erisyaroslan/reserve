@@ -19,7 +19,6 @@
       --accent-green: #66BB6A;
       --deep-sage: #1B4332;
       --text-dark: #2f2f2f;
-      /* Darker glass tint for better green text contrast */
       --glass-bg: rgba(255, 255, 255, 0.25);
       --glass-border: rgba(255, 255, 255, 0.4);
     }
@@ -39,6 +38,7 @@
       color: var(--text-dark);
       font-family: "Inter", sans-serif;
       overflow-x: hidden;
+      min-height: 100vh;
     }
 
     /* ===== LUSH GREEN BACKGROUND SYSTEM ===== */
@@ -55,63 +55,86 @@
         radial-gradient(circle at 50% 50%, #D8E2DC 0%, #B7E4C7 100%);
     }
 
-    /* ===== DASHBOARD HEADER (CONSISTENT WITH HOME) ===== */
+    /* ===== DASHBOARD HEADER ===== */
     header.dashboard {
       position: fixed;
       top: 0;
       width: 100%;
-      height: 75px;
-      background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
-      backdrop-filter: blur(10px);
+      height: 80px;
+      background: rgba(46, 125, 50, 0.9);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 0 8%;
       color: white;
       z-index: 1000;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .dashboard .logo {
-      font-size: 1.75rem;
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
       font-weight: 800;
-      letter-spacing: -0.5px;
-      font-family: "Playfair Display", serif;
-      background: linear-gradient(135deg, #ffffff, rgba(255, 255, 255, 0.95));
+      background: linear-gradient(to right, #fff, #C8E6C9);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      background-clip: text;
-      transition: transform 0.3s ease;
       cursor: pointer;
     }
 
-    .dashboard .logo:hover {
-      transform: scale(1.05);
+    nav {
+      display: flex;
+      gap: 15px;
     }
 
-    .dashboard nav a {
-      font-family: "Inter", sans-serif;
-      padding: 10px 20px;
-      text-decoration: none;
+    nav a {
       color: white;
+      text-decoration: none;
       font-weight: 500;
       font-size: 0.95rem;
+      padding: 8px 16px;
       border-radius: 12px;
-      transition: 0.3s;
+      transition: all 0.3s ease;
     }
 
-    .dashboard nav a:hover {
+    nav a:hover {
       background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    /* ===== FLOATING ICONS SYSTEM ===== */
+    .floating-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .floating-icon {
+      position: absolute;
+      color: var(--deep-sage);
+      opacity: 0.12;
+      animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+      from {
+        transform: translateY(110vh) rotate(0deg);
+      }
+
+      to {
+        transform: translateY(-20vh) rotate(360deg);
+      }
     }
 
     /* ===== CONTENT AREA ===== */
     main {
       padding-top: 140px;
-    }
-
-    main,
-    .journey {
-      background: transparent;
     }
 
     .hero-section {
@@ -122,24 +145,22 @@
 
     .hero-section h2 {
       font-family: 'Playfair Display', serif;
-      font-size: 4rem;
+      font-size: 3.8rem;
       margin-bottom: 20px;
     }
 
     .hero-p {
       font-family: "Outfit", sans-serif;
-      font-weight: 300;
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       max-width: 600px;
       margin: 0 auto;
-      color: var(--deep-sage);
       line-height: 1.8;
     }
 
-    /* ===== UNIFIED GLASS CARDS (GREEN TEXT) ===== */
+    /* ===== JOURNEY STEPS ===== */
     .journey {
       padding: 40px 8% 100px;
-      max-width: 1100px;
+      max-width: 1000px;
       margin: 0 auto;
     }
 
@@ -147,16 +168,17 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 60px;
-      margin-bottom: 50px;
-      padding: 60px;
+      gap: 50px;
+      margin-bottom: 40px;
+      padding: 50px;
       background: var(--glass-bg);
       backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border-radius: 40px;
       border: 1px solid var(--glass-border);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
       opacity: 0;
-      transform: translateY(40px);
+      transform: translateY(30px);
       transition: 0.8s ease-out;
     }
 
@@ -169,49 +191,25 @@
       flex-direction: row-reverse;
     }
 
-    .step-content {
-      flex: 1.5;
-      max-width: 520px;
-    }
-
-    .step-tag {
-      display: inline-block;
-      padding: 6px 14px;
-      background: var(--deep-sage);
-      color: white;
-      border-radius: 8px;
-      font-weight: 800;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-      font-family: "Inter", sans-serif;
-    }
-
-    /* Headings and Paragraphs now in Deep Green for readability */
     .step-content h3 {
       font-family: 'Playfair Display', serif;
-      font-size: 2.8rem;
+      font-size: 2.5rem;
       color: var(--deep-sage);
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
 
     .step-content p {
       font-family: "Outfit", sans-serif;
-      font-weight: 400;
-      /* Slightly thicker for better legibility in green */
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       line-height: 1.7;
       color: var(--deep-sage);
       text-align: justify;
     }
 
-    /* BIG ICON STYLING */
     .step-icon-large {
-      font-size: 10rem;
+      font-size: 8rem;
       color: var(--primary-green);
-      /* Matching the primary brand green */
-      flex-shrink: 0;
-      opacity: 0.9;
+      opacity: 0.8;
     }
 
     .reserve-footer {
@@ -247,37 +245,13 @@
       color: var(--text-dark);
       opacity: 0.6;
     }
-
-    .floating-icon {
-      position: fixed;
-      color: var(--deep-sage);
-      /* Increase opacity slightly if they are too faint to see */
-      opacity: 0.15;
-      font-size: 6rem;
-      /* -1 ensures they stay behind the glass cards */
-      z-index: -1;
-      pointer-events: none;
-      animation: float 25s linear infinite;
-    }
-
-    @keyframes float {
-      from {
-        transform: translateY(110vh) rotate(0deg);
-      }
-
-      to {
-        transform: translateY(-20vh) rotate(360deg);
-      }
-    }
   </style>
 </head>
 
 <body>
   <div class="bg-gradient-overlay"></div>
 
-  <i class="ph-bowl-food floating-icon" style="left: 10%; animation-duration: 20s;"></i>
-  <i class="ph-leaf floating-icon" style="left: 80%; animation-delay: 5s;"></i>
-  <i class="ph-apple-logo floating-icon" style="left: 45%; animation-duration: 30s;"></i>
+  <div class="floating-container" id="iconBox"></div>
 
   <header class="dashboard">
     <div class="logo">ReServe 🌱</div>
@@ -297,59 +271,77 @@
     </section>
 
     <section class="journey">
-
       <div class="step-card reveal">
         <div class="step-content">
-          <div class="step-tag">Step 01</div>
+          <div
+            style="text-transform:uppercase; font-weight:800; font-size:0.8rem; margin-bottom:10px; color:var(--deep-sage)">
+            Step 01</div>
           <h3>Vendors List Surplus</h3>
-          <p>Local or nearby  campus vendors identify meals that are perfectly good but unsold. They upload them to our dashboard
-            with a significant discount, ensuring nothing goes to waste.</p>
+          <p>Local vendors identify meals that are perfectly good but unsold. They upload them with a significant
+            discount, ensuring nothing goes to waste.</p>
         </div>
-        <div class="step-icon-large">
-          <i class="ph-storefront"></i>
-        </div>
+        <div class="step-icon-large"><i class="ph-storefront"></i></div>
       </div>
 
       <div class="step-card reveal">
         <div class="step-content">
-          <div class="step-tag">Step 02</div>
+          <div
+            style="text-transform:uppercase; font-weight:800; font-size:0.8rem; margin-bottom:10px; color:var(--deep-sage)">
+            Step 02</div>
           <h3>Claim Your Meal</h3>
           <p>Browse the live map in real-time. Once you find a meal you like, reserve it instantly. No more wondering
-            what's left at the cafeteria at the end of the day.</p>
+            what's left at the end of the day.</p>
         </div>
-        <div class="step-icon-large">
-          <i class="ph-hand-pointing"></i>
-        </div>
+        <div class="step-icon-large"><i class="ph-hand-pointing"></i></div>
       </div>
 
       <div class="step-card reveal">
         <div class="step-content">
-          <div class="step-tag">Step 03</div>
+          <div
+            style="text-transform:uppercase; font-weight:800; font-size:0.8rem; margin-bottom:10px; color:var(--deep-sage)">
+            Step 03</div>
           <h3>Quick Pickup</h3>
           <p>Head to the location, show your digital receipt, and grab your food. Fast, easy, and you just helped save a
             perfectly good meal from the bin.</p>
         </div>
-        <div class="step-icon-large">
-          <i class="ph-qr-code"></i>
-        </div>
+        <div class="step-icon-large"><i class="ph-qr-code"></i></div>
       </div>
-
     </section>
   </main>
 
   <footer class="reserve-footer">
-    <div class="footer-content">
-      <p class="footer-tagline">Eat Smart • Live Green</p>
-      <div class="footer-copyright">© 2026 ReServe. All rights reserved.</div>
-    </div>
+    <p class="footer-tagline">Eat Smart • Live Green</p>
+    <div class="footer-copyright">© 2026 ReServe. All rights reserved.</div>
   </footer>
 
   <script>
+    // 1. GENERATE FLOATING ICONS
+    const iconBox = document.getElementById('iconBox');
+    const icons = ['ph-leaf', 'ph-bowl-food', 'ph-apple-logo', 'ph-fork-knife', 'ph-plant'];
+    const count = 15; // Adjusted for "A lot but not too packed"
+
+    for (let i = 0; i < count; i++) {
+      const icon = document.createElement('i');
+      const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+
+      icon.className = `${randomIcon} floating-icon`;
+
+      // Randomize position and animation
+      icon.style.left = Math.random() * 100 + 'vw';
+      icon.style.fontSize = (Math.random() * 3 + 3) + 'rem'; // Sizes between 3rem and 6rem
+      icon.style.animationDuration = (Math.random() * 15 + 15) + 's'; // 15s to 30s speed
+      icon.style.animationDelay = (Math.random() * 20) + 's'; // Stagger the start times
+
+      iconBox.appendChild(icon);
+    }
+
+    // 2. REVEAL ANIMATION ON SCROLL
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) entry.target.classList.add('active');
       });
     }, { threshold: 0.1 });
+
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   </script>
 </body>

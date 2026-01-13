@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>ReServe | User Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-green: #2E7D32;
+      --accent-green: #66BB6A;
+      --light-green: #F1F8E9;
+      --text-dark: #1A1A1A;
+      --muted: #627264;
+      --radius-lg: 24px;
+      --radius-sm: 14px;
+      --shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+      --darker-green: #1B4332;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: var(--light-green);
+      background-image: radial-gradient(circle at top right, #E8F5E9 0%, #F1F8E9 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: var(--text-dark);
+    }
+
+    /* HEADER (Matches Browse, Cart, History) */
+    header.dashboard {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 80px;
+      background: rgba(46, 125, 50, 0.9);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 8%;
+      color: white;
+      z-index: 1000;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .logo {
+      font-family: "Playfair Display", serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(to right, #fff, #C8E6C9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      position: relative;
+    }
+
+    .nav-links a.active {
+      color: white;
+      font-weight: 700;
+    }
+
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--accent-green);
+      border-radius: 2px;
+    }
+
+    .logout-btn {
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      padding: 8px 20px;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      transition: all 0.3s;
+    }
+
+    .logout-btn:hover {
+      background: white;
+      color: var(--primary-green);
+    }
+
+    /* MAIN CONTENT */
+    main {
+      padding: 120px 8% 50px;
+      max-width: 1200px;
+      margin: auto;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .welcome-section {
+      margin-bottom: 40px;
+    }
+
+    .welcome-section h1 {
+      font-family: "Playfair Display", serif;
+      font-size: 3rem;
+      color: var(--darker-green);
+      margin-bottom: 10px;
+    }
+
+    .welcome-section p {
+      font-weight: 500;
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    /* STATS CARDS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-bottom: 60px;
+    }
+
+    .stat-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 35px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 6px;
+      height: 100%;
+      background: var(--primary-green);
+    }
+
+    .stat-card h3 {
+      font-size: 1rem;
+      color: var(--muted);
+      margin-bottom: 15px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-card span {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--darker-green);
+      display: block;
+      letter-spacing: -1px;
+    }
+
+    /* ORDER HISTORY SECTION */
+    .section-title {
+      font-family: "Playfair Display", serif;
+      font-size: 2.2rem;
+      color: var(--darker-green);
+      margin-bottom: 30px;
+    }
+
+    .order-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 25px;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: all 0.3s ease;
+    }
+
+    .order-card:hover {
+      transform: scale(1.01);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+    }
+
+    .order-info h4 {
+      font-size: 1.2rem;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .order-info p {
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .order-price {
+      font-weight: 800;
+      color: var(--primary-green);
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+      text-align: right;
+    }
+
+    .status {
+      background: var(--light-green);
+      color: var(--primary-green);
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: inline-block;
+      border: 1px solid rgba(46, 125, 50, 0.1);
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="dashboard active-page">
+    <div class="logo">ReServe 🌱</div>
+    <nav class="nav-links">
+      <a href="userdashboard.html" class="active">Dashboard</a>
+      <a href="userbrowsemeal.html">Browse Meals</a>
+      <a href="usercart.html">Cart</a>
+      <a href="userhistory.html">History</a>
+      <a href="userprofile.html">Profile</a>
+      <a href="index.html" class="logout-btn">Logout</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- WELCOME -->
+    <section class="welcome-section">
+      <h1>Welcome back, User!</h1>
+      <p>Here's your food rescue impact today.</p>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <h3>Meals Rescued</h3>
+        <span>0</span>
+      </div>
+
+      <div class="stat-card">
+        <h3>Money Saved</h3>
+        <span>RM 0.00</span>
+      </div>
+    </section>
+
+    <!-- ORDER HISTORY -->
+    <section>
+      <h2 class="section-title">Recent Orders</h2>
+
+      <div class="recent-orders-container">
+        <div style="text-align: center; padding: 40px; color: #777;">
+          <p>Loading orders...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Firebase Scripts -->
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="userdashboard.js"></script>
+
+</body>
+
+</html>
