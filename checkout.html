@@ -1,15 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<<<<<<< HEAD
-
-=======
->>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
 <head>
   <meta charset="UTF-8">
   <title>ReServe | Checkout</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<<<<<<< HEAD
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap"
     rel="stylesheet">
@@ -181,106 +176,14 @@
     }
 
     /* POPUP STYLING */
-=======
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #E8F5E9;
-      margin: 0;
-    }
-
-    header {
-      background: linear-gradient(135deg,#2E7D32,#66BB6A);
-      padding: 18px 8%;
-      color: white;
-      font-weight: 700;
-      font-size: 1.3rem;
-    }
-
-    main {
-      max-width: 800px;
-      margin: auto;
-      padding: 30px 8%;
-    }
-
-    .box {
-      background: white;
-      border-radius: 18px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    }
-
-    h3 {
-      margin-bottom: 12px;
-      color: #1B4332;
-      font-size: 1.3rem;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 10px;
-      cursor: pointer;
-      padding: 12px;
-      border-radius: 10px;
-      transition: background 0.2s;
-    }
-
-    label:hover {
-      background: #f5f5f5;
-    }
-
-    input[type="radio"] {
-      margin-right: 10px;
-    }
-
-    .btn-pay {
-      width: 100%;
-      background: #2E7D32;
-      color: white;
-      border: none;
-      padding: 14px;
-      font-size: 1rem;
-      border-radius: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .btn-pay:hover {
-      background: #1B4332;
-    }
-
-    .btn-pay:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-
-    .summary p {
-      margin: 8px 0;
-      font-size: 1rem;
-    }
-
-    .summary p strong {
-      color: #1B4332;
-    }
-
->>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
     .popup-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-<<<<<<< HEAD
       background: rgba(26, 26, 26, 0.6);
       backdrop-filter: blur(8px);
-=======
-      background: rgba(0,0,0,0.4);
-      backdrop-filter: blur(5px);
->>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
       display: none;
       justify-content: center;
       align-items: center;
@@ -289,7 +192,6 @@
 
     .popup-box {
       background: white;
-<<<<<<< HEAD
       padding: 45px;
       border-radius: 30px;
       width: 90%;
@@ -297,29 +199,14 @@
       text-align: center;
       box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
       animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-=======
-      padding: 40px;
-      border-radius: 20px;
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-      animation: popIn 0.3s ease;
->>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
     }
 
     @keyframes popIn {
       from {
-<<<<<<< HEAD
         transform: scale(0.8);
         opacity: 0;
       }
 
-=======
-        transform: scale(0.9);
-        opacity: 0;
-      }
->>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
       to {
         transform: scale(1);
         opacity: 1;
@@ -327,7 +214,6 @@
     }
 
     .popup-box h2 {
-<<<<<<< HEAD
       font-family: 'Playfair Display', serif;
       color: var(--primary-green);
       margin-bottom: 15px;
@@ -340,25 +226,11 @@
       color: var(--muted);
       line-height: 1.5;
     }
-=======
-      color: #2E7D32;
-      margin-bottom: 15px;
-      font-size: 1.8rem;
-    }
-
-    .popup-box p {
-      margin-bottom: 25px;
-      font-size: 1.1rem;
-      color: #555;
-    }
-
->>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
   </style>
 </head>
 
 <body>
 
-<<<<<<< HEAD
   <header class="dashboard">
     <div class="logo">ReServe 🌱</div>
   </header>
@@ -394,47 +266,4 @@
 
 </body>
 
-=======
-<header>
-  Checkout
-</header>
-
-<main>
-
-  <!-- ORDER SUMMARY -->
-  <div class="box summary">
-    <h3>Order Summary</h3>
-    <p>Total Items: <strong><span id="totalItems">0</span></strong></p>
-    <p>Total Price: <strong>RM <span id="totalPrice">0.00</span></strong></p>
-  </div>
-
-  <!-- PAYMENT -->
-  <div class="box">
-    <h3>Payment Method</h3>
-
-    <label>
-      <input type="radio" name="payment" value="cash" checked>
-      Cash on Pickup
-    </label>
-
-
-  <!-- PAY BUTTON -->
-  <button class="btn-pay" onclick="confirmPayment()">Confirm</button>
-
-  <!-- SUCCESS POPUP -->
-  <div class="popup-overlay" id="successPopup">
-    <div class="popup-box">
-      <h2>🎉 Payment Successful!</h2>
-      <button class="btn-pay" onclick="goToOrders()">View My Orders</button>
-    </div>
-  </div>
-
-</main>
-
-<!-- Firebase Scripts -->
-<script type="module" src="firebase-config.js"></script>
-<script type="module" src="checkout.js"></script>
-
-</body>
->>>>>>> 2f912006680d5fd4844d911e0e16ecec21083254
 </html>
