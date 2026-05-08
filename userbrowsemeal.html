@@ -61,6 +61,7 @@
       font-weight: 800;
       letter-spacing: -0.5px;
       background: linear-gradient(to right, #fff, #C8E6C9);
+      background-clip: text;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -151,6 +152,221 @@
       color: white;
     }
 
+    /* MAP SECTION */
+    .map-section {
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      margin: 8px 0 28px;
+      overflow: hidden;
+    }
+
+    .map-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 20px;
+      border-bottom: 1px solid rgba(46, 125, 50, 0.12);
+      background: linear-gradient(135deg, rgba(102, 187, 106, 0.14), rgba(46, 125, 50, 0.06));
+    }
+
+    .map-title h2 {
+      font-size: 1.1rem;
+      color: var(--darker-green);
+      margin-bottom: 2px;
+      font-weight: 800;
+    }
+
+    .map-title p {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .location-badge {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--primary-green);
+      background: rgba(102, 187, 106, 0.18);
+      border: 1px solid rgba(46, 125, 50, 0.2);
+      padding: 8px 12px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    #discountMap {
+      width: 100%;
+      height: 360px;
+      background: linear-gradient(135deg, #F5FFF5, #EAF7EA);
+    }
+
+    .map-helper {
+      padding: 12px 20px 18px;
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+
+    .map-helper strong {
+      color: var(--darker-green);
+    }
+
+    .map-popup h4 {
+      font-size: 0.95rem;
+      color: var(--darker-green);
+      margin-bottom: 4px;
+    }
+
+    .map-popup p {
+      font-size: 0.8rem;
+      color: #4B5E4E;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .map-popup .discount-tag {
+      display: inline-block;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #1D6B20;
+      background: #DDF6DE;
+      border-radius: 999px;
+      padding: 4px 8px;
+    }
+
+    /* FLOATING AI ASSISTANT */
+    .ai-fab {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 1200;
+      pointer-events: auto;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, #2E7D32, #1B4332);
+      color: #fff;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 12px 28px rgba(46, 125, 50, 0.35);
+    }
+
+    .ai-panel {
+      position: fixed;
+      right: 24px;
+      bottom: 95px;
+      width: min(360px, calc(100vw - 30px));
+      z-index: 1200;
+      pointer-events: auto;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      box-shadow: 0 14px 36px rgba(21, 64, 33, 0.22);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      overflow: hidden;
+      display: none;
+    }
+
+    .ai-panel.open {
+      display: block;
+    }
+
+    .ai-header {
+      padding: 14px 16px;
+      background: linear-gradient(135deg, rgba(102, 187, 106, 0.18), rgba(46, 125, 50, 0.07));
+      border-bottom: 1px solid rgba(46, 125, 50, 0.12);
+    }
+
+    .ai-header h3 {
+      color: #1B4332;
+      font-size: 0.98rem;
+      margin-bottom: 2px;
+    }
+
+    .ai-header p {
+      color: #4E6B52;
+      font-size: 0.78rem;
+    }
+
+    .ai-body {
+      max-height: 300px;
+      overflow-y: auto;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ai-msg {
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 0.84rem;
+      line-height: 1.4;
+    }
+
+    .ai-msg.bot {
+      background: #EEF7EF;
+      color: #31533A;
+      align-self: flex-start;
+      max-width: 100%;
+    }
+
+    .ai-msg.user {
+      background: #2E7D32;
+      color: #fff;
+      align-self: flex-end;
+      max-width: 90%;
+    }
+
+    .ai-quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0 14px 10px;
+    }
+
+    .ai-chip {
+      border: 1px solid rgba(46, 125, 50, 0.22);
+      border-radius: 999px;
+      background: #fff;
+      color: #2E7D32;
+      font-size: 0.74rem;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .ai-input-wrap {
+      display: flex;
+      gap: 8px;
+      padding: 10px 12px 12px;
+      border-top: 1px solid rgba(46, 125, 50, 0.12);
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    .ai-input-wrap input {
+      flex: 1;
+      border-radius: 12px;
+      border: 1px solid rgba(46, 125, 50, 0.18);
+      padding: 10px 12px;
+      font-size: 0.83rem;
+      outline: none;
+    }
+
+    .ai-input-wrap button {
+      border: none;
+      border-radius: 12px;
+      width: 44px;
+      background: linear-gradient(135deg, #2E7D32, #1B4332);
+      color: #fff;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
     /* MEAL CARDS */
     .meal-card {
       background: var(--white);
@@ -236,6 +452,27 @@
       transform: scale(0.9);
       box-shadow: 0 2px 10px rgba(46, 125, 50, 0.2);
     }
+
+    @media (max-width: 768px) {
+      .map-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      #discountMap {
+        height: 300px;
+      }
+
+      .ai-fab {
+        right: 14px;
+        bottom: 14px;
+      }
+
+      .ai-panel {
+        right: 12px;
+        bottom: 86px;
+      }
+    }
   </style>
 
 </head>
@@ -271,6 +508,21 @@
       <div class="category" data-category="Western">Western</div>
     </div>
 
+    <!-- DISCOUNTED VENDORS MAP -->
+    <section class="map-section" aria-label="Nearby discounted meal vendors map">
+      <div class="map-header">
+        <div class="map-title">
+          <h2>Nearby Eco Deals</h2>
+          <p>Find discounted meals from vendors around your current location.</p>
+        </div>
+        <div id="locationBadge" class="location-badge">Locating you...</div>
+      </div>
+      <div id="discountMap"></div>
+      <div class="map-helper">
+        <strong>Tip:</strong> Click a marker to view the vendor, discount, and available meal deal.
+      </div>
+    </section>
+
     <!-- MEAL ITEMS CONTAINER (Dynamic) -->
     <div id="mealsContainer">
       <!-- Meals will be loaded here by JavaScript -->
@@ -281,9 +533,184 @@
 
   </main>
 
+  <button id="aiAssistantToggle" class="ai-fab" type="button" aria-label="Open AI assistant">🤖</button>
+  <section id="aiAssistantPanel" class="ai-panel" aria-label="ReServe AI Assistant">
+    <div class="ai-header">
+      <h3>ReServe AI Assistant</h3>
+      <p>Smart filters + recommendations from your order history</p>
+    </div>
+    <div id="aiMessages" class="ai-body">
+      <div class="ai-msg bot">
+        Ask me to filter meals or recommend meals based on your history.
+      </div>
+    </div>
+    <div class="ai-quick-actions">
+      <button class="ai-chip" data-ai-prompt="Recommend meals for me based on my order history.">Recommend for
+        me</button>
+      <button class="ai-chip" data-ai-prompt="Filter budget-friendly meals under RM 10.">Budget filter</button>
+      <button class="ai-chip" data-ai-prompt="Show high-protein options from available meals.">High protein</button>
+      <button class="ai-chip" data-ai-prompt="Clear AI filter and show all meals.">Reset meals</button>
+    </div>
+    <form id="aiAssistantForm" class="ai-input-wrap">
+      <input id="aiAssistantInput" type="text" placeholder="e.g. Recommend low-carb meals">
+      <button type="submit" aria-label="Send message">➤</button>
+    </form>
+  </section>
+
+  <script>
+    window.GEMINI_API_KEY = "AIzaSyCNs2Vbgq5lo5VAv1kc3iw7c-VWAW3U7FQ";
+  </script>
+
   <!-- Add Firebase scripts BEFORE closing body tag -->
   <script type="module" src="firebase-config.js"></script>
   <script type="module" src="userbrowsemeal.js"></script>
 
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggle = document.getElementById("aiAssistantToggle");
+      const panel = document.getElementById("aiAssistantPanel");
+      if (!toggle || !panel) return;
+
+      toggle.addEventListener("click", () => {
+        panel.classList.toggle("open");
+      });
+    });
+
+    let discountMap;
+
+    const discountedVendors = [
+      {
+        name: "Green Bowl Kitchen",
+        discount: "25% OFF",
+        meal: "Rescue Rice Bowl",
+        description: "Fresh surplus produce meals",
+        latOffset: 0.0056,
+        lngOffset: 0.0031
+      },
+      {
+        name: "Campus Food Hub",
+        discount: "40% OFF",
+        meal: "Late Lunch Set",
+        description: "Limited discounted hot meals",
+        latOffset: -0.0042,
+        lngOffset: 0.0025
+      },
+      {
+        name: "Eco Bites Stall",
+        discount: "30% OFF",
+        meal: "Snack Saver Pack",
+        description: "End-of-day snack bundles",
+        latOffset: 0.0037,
+        lngOffset: -0.0048
+      }
+    ];
+
+    function buildPopup(vendor) {
+      return `
+        <div class="map-popup">
+          <h4>${vendor.name}</h4>
+          <p>${vendor.description}<br>${vendor.meal}</p>
+          <span class="discount-tag">${vendor.discount}</span>
+        </div>
+      `;
+    }
+
+    function addVendorMarkers(currentPosition) {
+      const infoWindow = new google.maps.InfoWindow();
+
+      discountedVendors.forEach((vendor) => {
+        const marker = new google.maps.Marker({
+          position: {
+            lat: currentPosition.lat + vendor.latOffset,
+            lng: currentPosition.lng + vendor.lngOffset
+          },
+          map: discountMap,
+          title: vendor.name,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 9,
+            fillColor: "#2E7D32",
+            fillOpacity: 1,
+            strokeColor: "#ffffff",
+            strokeWeight: 2
+          }
+        });
+
+        marker.addListener("click", () => {
+          infoWindow.setContent(buildPopup(vendor));
+          infoWindow.open(discountMap, marker);
+        });
+      });
+    }
+
+    function setUserMarker(position) {
+      new google.maps.Marker({
+        position,
+        map: discountMap,
+        title: "You are here",
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 10,
+          fillColor: "#1E88E5",
+          fillOpacity: 1,
+          strokeColor: "#ffffff",
+          strokeWeight: 3
+        }
+      });
+    }
+
+    function updateLocationBadge(text) {
+      const badge = document.getElementById("locationBadge");
+      if (badge) badge.textContent = text;
+    }
+
+    function initDiscountMapWithPosition(position) {
+      discountMap = new google.maps.Map(document.getElementById("discountMap"), {
+        center: position,
+        zoom: 14,
+        disableDefaultUI: false,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: false
+      });
+
+      setUserMarker(position);
+      addVendorMarkers(position);
+      updateLocationBadge("Nearby vendors loaded");
+    }
+
+    function initDiscountMap() {
+      const fallbackPosition = { lat: 14.5995, lng: 120.9842 };
+
+      if (!navigator.geolocation) {
+        updateLocationBadge("Location unavailable");
+        initDiscountMapWithPosition(fallbackPosition);
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const currentPosition = {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude
+          };
+          updateLocationBadge("You are here");
+          initDiscountMapWithPosition(currentPosition);
+        },
+        () => {
+          updateLocationBadge("Using default area");
+          initDiscountMapWithPosition(fallbackPosition);
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    }
+
+    window.initDiscountMap = initDiscountMap;
+  </script>
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBKiMQHafUNOXBXPeppGmLsX8PnQjNIQCA&callback=initDiscountMap"></script>
+
+
 </body>
+
 </html>
