@@ -182,18 +182,14 @@ function displayRecentOrders(orders) {
     }).join('');
 }
 
-// Format date helper
+// Format date helper to show exact Malaysia time
 function formatDate(date) {
-    const now = new Date();
-    const diffTime = Math.abs(now - date);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 0) return 'Today';
-    if (diffDays === 1) return 'Yesterday';
-    if (diffDays <= 7) return `${diffDays} days ago`;
-    
-    return date.toLocaleDateString('en-GB', { 
+    // This will format the date to: 13 Jan, 4:30 PM
+    return date.toLocaleString('en-GB', { 
         day: 'numeric', 
-        month: 'short'
+        month: 'short',
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: true 
     });
 }
