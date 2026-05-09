@@ -181,6 +181,10 @@ categories.forEach(category => {
 
 // Search functionality
 const searchBox = document.querySelector(".search-box");
+const minPriceInput = document.getElementById('minPriceInput');
+const maxPriceInput = document.getElementById('maxPriceInput');
+const priceFilterBtn = document.getElementById('priceFilterBtn');
+const clearPriceFilterBtn = document.getElementById('clearPriceFilterBtn');
 
 if (searchBox) {
     searchBox.addEventListener("input", (e) => {
@@ -198,6 +202,42 @@ if (searchBox) {
         if (searchTerm) {
             categories.forEach(c => c.classList.remove("active"));
         }
+    });
+}
+
+function filterMealsByPrice(minPrice, maxPrice) {
+    const min = Number.isFinite(minPrice) ? minPrice : 0;
+    const max = Number.isFinite(maxPrice) ? maxPrice : Infinity;
+
+    if (min < 0 || max < 0 || max < min) {
+        return [];
+    }
+
+    return allMeals.filter(meal => {
+        const price = Number(meal.discountPrice || meal.originalPrice || 0);
+        return price >= min && price <= max;
+    });
+}
+
+if (priceFilterBtn) {
+    priceFilterBtn.addEventListener('click', () => {
+        const min = parseFloat(minPriceInput?.value || '');
+        const max = parseFloat(maxPriceInput?.value || '');
+        const minValue = Number.isFinite(min) ? min : 0;
+        const maxValue = Number.isFinite(max) ? max : Infinity;
+
+        const filtered = filterMealsByPrice(minValue, maxValue);
+        displayMeals(filtered);
+        categories.forEach(c => c.classList.remove('active'));
+    });
+}
+
+if (clearPriceFilterBtn) {
+    clearPriceFilterBtn.addEventListener('click', () => {
+        if (minPriceInput) minPriceInput.value = '';
+        if (maxPriceInput) maxPriceInput.value = '';
+        displayMeals(allMeals);
+        setAllCategoryActive();
     });
 }
 

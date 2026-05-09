@@ -127,10 +127,64 @@
       outline: none;
     }
 
-    .category-list {
+    .filter-row {
       display: flex;
-      gap: 12px;
-      margin: 25px 0;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin: 20px 0;
+    }
+
+    .price-filter {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .price-filter input {
+      width: 110px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(46, 125, 50, 0.12);
+      font-size: 0.95rem;
+      outline: none;
+      background: white;
+    }
+
+    .price-filter .price-separator {
+      color: #4B5E4E;
+      font-size: 0.95rem;
+    }
+
+    .price-filter button {
+      padding: 12px 18px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      background: var(--primary-green);
+      color: white;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .price-filter button:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+
+    .price-filter .price-clear-btn {
+      background: #e0e0e0;
+      color: #333;
+    }
+
+    .category-list {
+      margin-top: 25px;
+      margin-bottom: 25px;
+      display: flex;
+      gap: 25px;
       overflow-x: auto;
       padding-bottom: 10px;
       scrollbar-width: none;
@@ -588,6 +642,24 @@
         bottom: 86px;
       }
     }
+
+    @media (max-width: 768px) {
+      .filter-row {
+        flex-direction: column;
+        align-items: stretch;
+        margin-top: 20px;
+        margin-bottom: 25px;
+      }
+
+      .price-filter {
+        justify-content: flex-start;
+      }
+
+      .price-filter input {
+        width: 100%;
+        min-width: 0;
+      }
+    }
   </style>
 
 </head>
@@ -615,7 +687,6 @@
       <input type="search" placeholder="Search meals..." class="search-box">
     </div>
 
-    <!-- CATEGORIES -->
     <div class="category-list">
       <div class="category active" data-category="All">All</div>
       <div class="category" data-category="Snacks">Snacks</div>
@@ -644,6 +715,16 @@
         <p style="margin:0; color:#4B5E4E;">Nearby vendor list will appear here after locating vendors.</p>
       </div>
     </section>
+
+    <div class="filter-row">
+      <div class="price-filter">
+        <input id="minPriceInput" type="number" min="0" step="0.01" placeholder="Min RM">
+        <span class="price-separator">to</span>
+        <input id="maxPriceInput" type="number" min="0" step="0.01" placeholder="Max RM">
+        <button id="priceFilterBtn" type="button">Filter</button>
+        <button id="clearPriceFilterBtn" type="button" class="price-clear-btn">Clear</button>
+      </div>
+    </div>
 
     <!-- MEAL ITEMS CONTAINER (Dynamic) -->
     <div id="mealsContainer">
