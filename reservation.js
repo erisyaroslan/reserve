@@ -1,10 +1,21 @@
 import { auth, db } from './firebase-config.js';
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { collection, query, where, getDocs, doc, updateDoc, orderBy, Timestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import {
+    collection,
+    query,
+    where,
+    getDocs,
+    doc,
+    updateDoc,
+    getDoc,
+    orderBy,
+    Timestamp
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 let currentVendor = null;
 let allOrders = [];
 let pendingAction = null;
+let html5QrScanner = null;
 
 // Auth check - ensure vendor is logged in
 onAuthStateChanged(auth, (user) => {
@@ -22,14 +33,13 @@ onAuthStateChanged(auth, (user) => {
 async function loadReservations() {
     try {
         console.log('Loading reservations for vendor:', currentVendor.uid);
-        
-        // Query orders for this vendor
+
         const ordersQuery = query(
             collection(db, "orders"),
             where("vendorId", "==", currentVendor.uid),
             orderBy("createdAt", "desc")
         );
-        
+
         const snapshot = await getDocs(ordersQuery);
         allOrders = [];
 
@@ -40,27 +50,25 @@ async function loadReservations() {
             });
         });
 
-        console.log('Loaded orders:', allOrders.length);
-
-        // Calculate and display stats
         updateStats();
-        
-        // Display orders based on current tab
+
         const activeTab = document.querySelector('.tab-btn.active').id;
         showTab(activeTab === 'tab-active' ? 'active' : 'history');
 
     } catch (error) {
         console.error("Error loading reservations:", error);
         showAppToast("Error loading reservations: " + error.message, "cancelled");
-        
-        // Show error in UI
+
         const container = document.getElementById('order-container');
+
         if (container) {
             container.innerHTML = `
                 <div style="text-align: center; padding: 40px; color: #d32f2f;">
                     <p><strong>Error loading reservations</strong></p>
                     <p style="font-size: 0.9rem; margin-top: 10px;">${error.message}</p>
-                    <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #2E7D32; color: white; border: none; border-radius: 10px; cursor: pointer;">Retry</button>
+                    <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #2E7D32; color: white; border: none; border-radius: 10px; cursor: pointer;">
+                        Retry
+                    </button>
                 </div>
             `;
         }
@@ -82,19 +90,19 @@ function updateStats() {
 window.showTab = function(type) {
     document.getElementById('tab-active').classList.toggle('active', type === 'active');
     document.getElementById('tab-history').classList.toggle('active', type === 'history');
-    
+
     if (type === 'active') {
         displayActiveOrders();
     } else {
         displayHistoryOrders();
     }
-}
+};
 
-// Display active (pending) orders
+// Display active orders
 function displayActiveOrders() {
     const container = document.getElementById('order-container');
     const activeOrders = allOrders.filter(order => order.status === 'pending');
-    
+
     if (activeOrders.length === 0) {
         container.innerHTML = `
             <div style="text-align: center; padding: 40px; color: #777;">
@@ -107,13 +115,16 @@ function displayActiveOrders() {
     container.innerHTML = activeOrders.map(order => createOrderCard(order, 'active')).join('');
 }
 
-// Display history (completed + cancelled) orders
+// Display history orders
 function displayHistoryOrders() {
     const container = document.getElementById('order-container');
-    const historyOrders = allOrders.filter(order => 
-        order.status === 'completed' || order.status === 'cancelled'
+
+    const historyOrders = allOrders.filter(order =>
+        order.status === 'completed' ||
+        order.status === 'cancelled' ||
+        order.status === 'expired'
     );
-    
+
     if (historyOrders.length === 0) {
         container.innerHTML = `
             <div style="text-align: center; padding: 40px; color: #777;">
@@ -128,60 +139,75 @@ function displayHistoryOrders() {
 
 // Create order card HTML
 function createOrderCard(order, viewType) {
-    // Get user name and ID
     const userName = order.userName || 'Unknown User';
     const userId = order.userId || 'N/A';
-    
-    // Get first item details (or combine multiple items)
+
     let foodName = 'Order';
     let totalQty = 0;
-    
+
     if (order.items && order.items.length > 0) {
         foodName = order.items[0].foodName || 'Order';
+
         if (order.items.length > 1) {
             foodName += ` +${order.items.length - 1} more`;
         }
-        
-        // Calculate total quantity
+
         order.items.forEach(item => {
             totalQty += item.quantity || 1;
         });
     } else {
         totalQty = order.totalItems || 1;
     }
-    
 
-    
-    // Determine if this is a history card
     const isHistory = viewType === 'history';
     const historyClass = isHistory ? 'is-history' : '';
-    
-    // Create action buttons or status label
+
     let actionHTML = '';
+
     if (isHistory) {
-        const labelClass = order.status === 'completed' ? 'label-collected' : 'label-cancelled';
-        const statusText = order.status === 'completed' ? 'COLLECTED' : 'CANCELLED';
+        let labelClass = 'label-cancelled';
+        let statusText = 'CANCELLED';
+
+        if (order.status === 'completed') {
+            labelClass = 'label-collected';
+            statusText = 'COLLECTED';
+        } else if (order.status === 'expired') {
+            labelClass = 'label-cancelled';
+            statusText = 'EXPIRED';
+        }
+
         actionHTML = `<span class="status-label ${labelClass}">${statusText}</span>`;
     } else {
         actionHTML = `
-            <button class="btn-action btn-collect" onclick="openAppModal('${order.id}', 'collected')">Collected</button>
-            <button class="btn-action btn-cancel" onclick="openAppModal('${order.id}', 'cancelled')">Cancel</button>
+            <button class="btn-action btn-collect" onclick="openScannerModal('${order.id}')">
+                Scan QR
+            </button>
+
+            <button class="btn-action btn-cancel" onclick="openAppModal('${order.id}', 'cancelled')">
+                Cancel
+            </button>
         `;
     }
-    
+
     return `
         <div class="res-card ${historyClass}" data-view="${viewType}" id="order-${order.id}">
             <div class="student-info">
                 <h4>${userName}</h4>
                 <p>ID: ${userId.substring(0, 10)}</p>
             </div>
+
             <div class="order-details">
                 <strong>${foodName}</strong>
+                <small style="display:block; color:#777; margin-top:5px;">
+                    Order #${order.id.substring(0, 8)}
+                </small>
             </div>
+
             <div class="qty-column">
                 <div class="qty-label">Qty</div>
                 <div class="qty-value">${totalQty}</div>
             </div>
+
             <div class="actions">
                 ${actionHTML}
             </div>
@@ -189,86 +215,192 @@ function createOrderCard(order, viewType) {
     `;
 }
 
-// Format pickup time
-function formatPickupTime(date) {
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    const displayHours = hours % 12 || 12;
-    const displayMinutes = minutes.toString().padStart(2, '0');
-    
-    return `Before ${displayHours}:${displayMinutes} ${ampm}`;
-}
+// QR SCANNER
+window.openScannerModal = async function(expectedOrderId) {
+    const modal = document.getElementById('scanner-modal');
+    const scannerBox = document.getElementById('qr-reader');
+    const scannerText = document.getElementById('scanner-order-text');
 
-// Open confirmation modal
-window.openAppModal = function(orderId, action) {
-    pendingAction = { orderId, action };
-    const confirmBtn = document.getElementById('modal-confirm-btn');
-    
-    const actionText = action === 'collected' ? 'collected' : 'cancelled';
-    document.getElementById('modal-msg').innerText = 
-        `Are you sure you want to mark this reservation as ${actionText}?`;
-
-    // Update modal styling based on action
-    if (action === 'cancelled') {
-        confirmBtn.classList.add('is-cancel-type');
-        confirmBtn.innerText = "Yes, Cancel Order";
-    } else {
-        confirmBtn.classList.remove('is-cancel-type');
-        confirmBtn.innerText = "Yes, Collected";
+    if (!modal || !scannerBox || !scannerText) {
+        showAppToast("Scanner modal not found in HTML.", "cancelled");
+        return;
     }
 
-    document.getElementById('custom-modal').style.display = 'flex';
+    modal.style.display = 'flex';
+    scannerText.innerText = `Scan QR for Order #${expectedOrderId.substring(0, 8)}`;
+
+    scannerBox.innerHTML = "";
+
+    html5QrScanner = new Html5Qrcode("qr-reader");
+
+    try {
+        await html5QrScanner.start(
+            { facingMode: "environment" },
+            {
+                fps: 10,
+                qrbox: {
+                    width: 250,
+                    height: 250
+                }
+            },
+            async (decodedText) => {
+                await handleScannedQR(decodedText, expectedOrderId);
+            },
+            () => {}
+        );
+    } catch (error) {
+        console.error(error);
+        showAppToast("Camera permission failed or scanner cannot start.", "cancelled");
+    }
+};
+
+async function handleScannedQR(scannedOrderId, expectedOrderId) {
+    try {
+        scannedOrderId = scannedOrderId.trim();
+
+        if (scannedOrderId !== expectedOrderId) {
+            showAppToast("QR does not match this order.", "cancelled");
+            return;
+        }
+
+        if (html5QrScanner) {
+            await html5QrScanner.stop();
+            html5QrScanner.clear();
+            html5QrScanner = null;
+        }
+
+        closeScannerModal();
+
+        await verifyAndCompleteOrder(scannedOrderId);
+
+    } catch (error) {
+        console.error(error);
+        showAppToast("QR verification failed.", "cancelled");
+    }
 }
+
+window.closeScannerModal = async function() {
+    const modal = document.getElementById('scanner-modal');
+
+    if (html5QrScanner) {
+        try {
+            await html5QrScanner.stop();
+            html5QrScanner.clear();
+        } catch (error) {
+            console.log("Scanner already stopped.");
+        }
+
+        html5QrScanner = null;
+    }
+
+    if (modal) {
+        modal.style.display = 'none';
+    }
+};
+
+async function verifyAndCompleteOrder(orderId) {
+    try {
+        const orderRef = doc(db, "orders", orderId);
+        const orderSnap = await getDoc(orderRef);
+
+        if (!orderSnap.exists()) {
+            showAppToast("Invalid QR. Order not found.", "cancelled");
+            return;
+        }
+
+        const orderData = orderSnap.data();
+
+        if (orderData.vendorId !== currentVendor.uid) {
+            showAppToast("This order does not belong to your stall.", "cancelled");
+            return;
+        }
+
+        if (orderData.status !== 'pending') {
+            showAppToast("This QR is no longer active.", "cancelled");
+            return;
+        }
+
+        await updateDoc(orderRef, {
+            status: 'completed',
+            completedAt: Timestamp.now(),
+            verifiedByQR: true
+        });
+
+        const orderIndex = allOrders.findIndex(o => o.id === orderId);
+
+        if (orderIndex !== -1) {
+            allOrders[orderIndex].status = 'completed';
+            allOrders[orderIndex].verifiedByQR = true;
+        }
+
+        updateStats();
+        showAppToast("QR verified. Order marked as collected!", "collected");
+
+        const activeTab = document.querySelector('.tab-btn.active').id;
+        showTab(activeTab === 'tab-active' ? 'active' : 'history');
+
+    } catch (error) {
+        console.error("Error verifying QR:", error);
+        showAppToast("Error: " + error.message, "cancelled");
+    }
+}
+
+// Open confirmation modal for cancel only
+window.openAppModal = function(orderId, action) {
+    pendingAction = { orderId, action };
+
+    const confirmBtn = document.getElementById('modal-confirm-btn');
+
+    document.getElementById('modal-msg').innerText =
+        `Are you sure you want to cancel this reservation?`;
+
+    confirmBtn.classList.add('is-cancel-type');
+    confirmBtn.innerText = "Yes, Cancel Order";
+
+    document.getElementById('custom-modal').style.display = 'flex';
+};
 
 // Close modal
 window.closeAppModal = function(confirmed) {
     document.getElementById('custom-modal').style.display = 'none';
-    
+
     if (confirmed && pendingAction) {
         processOrder(pendingAction.orderId, pendingAction.action);
     }
-    
-    pendingAction = null;
-}
 
-// Process order (mark as collected or cancelled)
+    pendingAction = null;
+};
+
+// Process order cancellation
 async function processOrder(orderId, action) {
     try {
-        const newStatus = action === 'collected' ? 'completed' : 'cancelled';
-        const timestampField = action === 'collected' ? 'completedAt' : 'cancelledAt';
-        
-        console.log('Processing order:', orderId, 'Action:', action);
-        
-        // Update in Firebase
+        const newStatus = action === 'cancelled' ? 'cancelled' : 'completed';
+        const timestampField = action === 'cancelled' ? 'cancelledAt' : 'completedAt';
+
         const orderRef = doc(db, "orders", orderId);
+
         await updateDoc(orderRef, {
             status: newStatus,
             [timestampField]: Timestamp.now()
         });
-        
-        console.log('Order updated successfully');
-        
-        // Update local data
+
         const orderIndex = allOrders.findIndex(o => o.id === orderId);
+
         if (orderIndex !== -1) {
             allOrders[orderIndex].status = newStatus;
         }
-        
-        // Update UI
+
         updateStats();
-        
-        // Show notification
-        if (action === 'collected') {
-            showAppToast("Order marked as collected!", "collected");
-        } else {
+
+        if (action === 'cancelled') {
             showAppToast("Order has been cancelled.", "cancelled");
+        } else {
+            showAppToast("Order marked as collected!", "collected");
         }
-        
-        // Refresh the current view
+
         const activeTab = document.querySelector('.tab-btn.active').id;
         showTab(activeTab === 'tab-active' ? 'active' : 'history');
-        
+
     } catch (error) {
         console.error("Error updating order:", error);
         showAppToast("Error: " + error.message, "cancelled");
@@ -278,16 +410,34 @@ async function processOrder(orderId, action) {
 // Show toast notification
 window.showAppToast = function(message, type) {
     const container = document.getElementById('toast-container');
+
+    if (!container) {
+        alert(message);
+        return;
+    }
+
     const toast = document.createElement('div');
     toast.className = `toast ${type === 'cancelled' ? 'toast-cancelled' : ''}`;
 
     const icon = type === 'collected' ? 'ph-check-circle' : 'ph-x-circle';
+
     toast.innerHTML = `<i class="${icon}" style="font-size:1.2rem"></i> ${message}`;
 
     container.appendChild(toast);
+
     setTimeout(() => {
         toast.style.opacity = '0';
         toast.style.transition = '0.5s';
+
         setTimeout(() => toast.remove(), 500);
     }, 3000);
-}
+};
+
+// Optional: close scanner when leaving page
+window.addEventListener('beforeunload', async () => {
+    if (html5QrScanner) {
+        try {
+            await html5QrScanner.stop();
+        } catch (error) {}
+    }
+});
