@@ -78,7 +78,10 @@ async function loadMeals() {
             return {
                 ...meal,
                 vendorName: vendorInfo.shopName || meal.vendorName || 'Vendor',
-                vendorLocation: vendorInfo.location || meal.vendorLocation || ''
+                vendorLocation: vendorInfo.location || meal.vendorLocation || '',
+                discountPrice: Number(meal.discountPrice) || 0,
+                originalPrice: Number(meal.originalPrice) || 0,
+                quantity: Number(meal.quantity) || 0
             };
         });
 
@@ -350,6 +353,18 @@ function scoreMealByPrompt(meal, promptLower, historyKeywords = [], promptTokens
         if (price > 0 && price <= 10) score += 5;
         else if (price <= 15) score += 2;
     }
+
+    const aboveMatch = promptLower.match(/(?:above|over|greater than|more than)\s*rm?\s*([\d.]+)/);
+    const aboveAfterMatch = promptLower.match(/rm?\s*([\d.]+)\s*(?:above|over|or more|and above)/);
+    const belowMatch = promptLower.match(/(?:below|under|less than|at most|maximum|up to)\s*rm?\s*([\d.]+)/);
+    const belowAfterMatch = promptLower.match(/rm?\s*([\d.]+)\s*(?:below|under|or less|or under|or below)/);
+
+    const aboveThreshold = aboveMatch ? parseFloat(aboveMatch[1]) : (aboveAfterMatch ? parseFloat(aboveAfterMatch[1]) : NaN);
+    const belowThreshold = belowMatch ? parseFloat(belowMatch[1]) : (belowAfterMatch ? parseFloat(belowAfterMatch[1]) : NaN);
+
+    if (!isNaN(aboveThreshold) && price > aboveThreshold) score += 6;
+    if (!isNaN(belowThreshold) && price <= belowThreshold) score += 6;
+
     if (promptLower.includes('protein')) {
         if (/chicken|beef|egg|fish|tofu|protein/.test(`${name} ${desc}`)) score += 5;
     }
@@ -395,6 +410,29 @@ function localFallbackAI(userPrompt, historyProfile = { topItems: [] }) {
             mealIds: [],
             reply: 'Done. I reset the meal list to show everything available.'
         };
+    }
+
+    const categoryIntentMap = [
+        { pattern: /\bwestern\b/, categories: ['western'] },
+        { pattern: /\bhot meal\b|\bhot\b/, categories: ['hot meal'] },
+        { pattern: /\bsnack\b|\bsnacks\b/, categories: ['snack'] }
+    ];
+
+    for (const entry of categoryIntentMap) {
+        if (entry.pattern.test(promptLower)) {
+            const filtered = allMeals.filter(meal => {
+                const mealCat = String(meal.category || '').toLowerCase();
+                return entry.categories.some(category => mealCat.includes(category));
+            });
+
+            if (filtered.length) {
+                return {
+                    action: /recommend|suggest|for me|history|favorite|favourite/.test(promptLower) ? 'recommend' : 'filter',
+                    mealIds: filtered.map(meal => meal.id),
+                    reply: `Showing ${filtered.length} ${entry.categories[0]} item${filtered.length === 1 ? '' : 's'} from available meals.`
+                };
+            }
+        }
     }
 
     const scored = allMeals
@@ -474,7 +512,13 @@ async function askGeminiForMealAction(userPrompt) {
     }));
 
     const prompt = `
-You are an assistant for a food rescue app.
+You are the assistant for the ReServe web app meal browser. This page lists available surplus meals that users can add to their cart. The user can ask you to filter meals, recommend meals, show budget-friendly options, or reset the list.
+
+Page context:
+- The page shows available meals with fields: id, foodName, category, discountPrice, originalPrice, quantity, and description.
+- The assistant should only use meal ids and names from the provided available meals list.
+- Do not invent meals, categories, prices, or ids that are not in the available meals JSON.
+
 User request: "${userPrompt}"
 
 Available meals JSON:
@@ -492,10 +536,12 @@ Return ONLY JSON with shape:
 }
 
 Rules:
-- For filtering/recommending, choose from available mealIds only.
-- Also include mealNames that match those ids.
-- If user asks to clear/reset, set action to "reset".
-- Keep reply concise, friendly, and practical.
+- For filtering or recommending, choose from available mealIds only.
+- Include mealNames that exactly match or correspond to the chosen mealIds.
+- If the user asks to clear or reset the filter, set action to "reset".
+- If the user asks about prices, use discountPrice values from available meals.
+- If no appropriate match is found, return action "none" with an empty mealIds array.
+- Keep reply concise, friendly, and specific to the available meals on this page.
 `;
 
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`, {
@@ -585,10 +631,6 @@ function initAIAssistant() {
     const chips = document.querySelectorAll('.ai-chip');
 
     if (!toggle || !panel || !form || !input) return;
-
-    toggle.addEventListener('click', () => {
-        panel.classList.toggle('open');
-    });
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
