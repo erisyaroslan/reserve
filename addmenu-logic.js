@@ -268,6 +268,16 @@ if (saveBtn) {
                 didOpen: () => Swal.showLoading()
             });
 
+            const fileInput = document.getElementById('mealImageInput');
+            let imageURL = null;
+            if (fileInput && fileInput.files[0]) {
+                imageURL = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.readAsDataURL(fileInput.files[0]);
+                });
+            }
+
             await addDoc(collection(db, "foodItems"), {
 
                 vendorId: currentVendorId,
@@ -289,6 +299,8 @@ if (saveBtn) {
                 latitude: selectedLocation.latitude,
 
                 longitude: selectedLocation.longitude,
+
+                imageURL: imageURL,
 
                 createdAt: new Date()
             });

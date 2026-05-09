@@ -133,7 +133,7 @@ window.confirmPayment = async function() {
                     quantity: item.quantity,
                     price: parseFloat(item.discountPrice),
                     originalPrice: parseFloat(item.originalPrice || 0),
-                    imageURL: item.imageURL,
+                    imageURL: item.imageURL || null,
                     category: item.category
                 })),
                 totalAmount: vendorTotalPrice,

@@ -89,6 +89,18 @@ async function loadMeals() {
         console.log('Meals with stock > 0:', allMeals);
         window.allMeals = allMeals;
 
+        // Validate cart against available meals
+        let cart = JSON.parse(localStorage.getItem('userCart') || '[]');
+        const originalCartLength = cart.length;
+        cart = cart.filter(cartItem => {
+            const meal = allMeals.find(m => m.id === cartItem.id);
+            return meal && meal.quantity > 0;
+        });
+        if (cart.length < originalCartLength) {
+            localStorage.setItem('userCart', JSON.stringify(cart));
+            showNotification(`${originalCartLength - cart.length} item(s) removed from cart as they are no longer available.`, 'warning');
+        }
+
         displayMeals(allMeals);
         if (window.refreshVendorMap) window.refreshVendorMap();
     } catch (error) {
@@ -668,7 +680,7 @@ window.addToCart = async function (mealId) {
                 foodName: meal.foodName,
                 discountPrice: meal.discountPrice,
                 originalPrice: meal.originalPrice,
-                imageURL: meal.imageURL,
+                imageURL: meal.imageURL || null,
                 category: meal.category,
                 vendorId: meal.vendorId,
                 vendorInfo: vendorInfo,
