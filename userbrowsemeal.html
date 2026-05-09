@@ -269,6 +269,65 @@
       color: var(--darker-green);
     }
 
+    .vendor-list {
+      display: grid;
+      gap: 16px;
+      padding: 20px;
+      border-top: 1px solid rgba(46, 125, 50, 0.08);
+      background: #fff;
+    }
+
+    .vendor-card {
+      background: #F7FFF7;
+      border: 1px solid rgba(46, 125, 50, 0.14);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.04);
+    }
+
+    .vendor-card h4 {
+      margin: 0 0 6px;
+      color: var(--darker-green);
+      font-size: 1rem;
+    }
+
+    .vendor-card p {
+      margin: 0 8px 10px;
+      color: #4B5E4E;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .vendor-card .vendor-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 0.82rem;
+      color: #2f5233;
+      margin-bottom: 12px;
+    }
+
+    .vendor-card .vendor-items {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    .vendor-card .vendor-items li {
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: white;
+      border: 1px solid rgba(46, 125, 50, 0.08);
+      color: #37423D;
+      font-size: 0.88rem;
+    }
+
+    .vendor-card .vendor-items li strong {
+      color: var(--primary-green);
+    }
+
     .map-popup h4 {
       font-size: 0.95rem;
       color: var(--darker-green);
@@ -574,12 +633,15 @@
         <div id="locationBadge" class="location-badge">Locating you...</div>
       </div>
       <div class="map-actions">
-        <button id="locateUserBtn" type="button" class="map-action-btn">Use My Current Location</button>
+        <button id="locateUserBtn" type="button" class="map-action-btn">Locate nearby vendors</button>
         <div id="mapStatus">Finding your nearest vendors…</div>
       </div>
       <div id="discountMap"></div>
       <div class="map-helper">
         <strong>Tip:</strong> Click any stall marker to view the vendor, current food, quantity, and reserve it directly.
+      </div>
+      <div id="nearbyVendorList" class="vendor-list">
+        <p style="margin:0; color:#4B5E4E;">Nearby vendor list will appear here after locating vendors.</p>
       </div>
     </section>
 
@@ -718,22 +780,64 @@
       });
     }
 
-    function buildPopup(vendor) {
-      const itemsHtml = vendor.items.slice(0, 3).map(item => `
-        <li>${item.foodName} • ${item.quantity} left • ${item.pickupTime}</li>
-      `).join('');
+    function renderNearbyVendorList(vendors) {
+      const list = document.getElementById('nearbyVendorList');
+      if (!list) return;
 
-      const topItem = vendor.items[0];
-      return `
-        <div class="map-popup">
+      if (!vendors.length) {
+        list.innerHTML = `<p style="margin:0; color:#4B5E4E;">No nearby vendors found yet. Try refreshing or allowing location access.</p>`;
+        return;
+      }
+
+      list.innerHTML = vendors.map(vendor => `
+        <div class="vendor-card">
           <h4>${vendor.vendorName}</h4>
-          <p>${vendor.stallAddress}</p>
-          <p>${vendor.distance !== null ? formatDistance(vendor.distance) : 'Distance unavailable'}</p>
-          <ul>${itemsHtml}</ul>
-          ${topItem ? `<button class="reserve-map-btn" onclick="addToCart('${topItem.id}')">Reserve top meal</button>` : ''}
+          <div class="vendor-meta">
+            <span>${vendor.stallAddress}</span>
+            <span>${vendor.distance != null ? formatDistance(vendor.distance) : 'Distance unknown'}</span>
+            <span>${vendor.items.length} meal${vendor.items.length === 1 ? '' : 's'} available</span>
+          </div>
+          <ul class="vendor-items">
+            ${vendor.items.map(item => `
+              <li><strong>${item.foodName}</strong> • ${item.quantity} left • RM ${parseFloat(item.price || 0).toFixed(2)}</li>
+            `).join('')}
+          </ul>
         </div>
-      `;
+      `).join('');
     }
+
+    function buildPopup(vendor) {
+  const items = Array.isArray(vendor.items) ? vendor.items : [];
+
+  const itemsHtml = items.length > 0
+    ? items.map(item => `
+        <li>
+          ${item.foodName || 'Unknown item'} • 
+          ${item.quantity ?? 0} left • 
+          ${item.pickupTime || 'No time'}
+        </li>
+      `).join('')
+    : `<li>No items available</li>`;
+
+  const topItem = items[0];
+
+  return `
+    <div class="map-popup">
+      <h4>${vendor.vendorName || 'Unknown Vendor'}</h4>
+      <p>${vendor.stallAddress || 'No address'}</p>
+      <p>${vendor.distance !== null ? formatDistance(vendor.distance) : 'Distance unavailable'}</p>
+      <ul>
+        ${itemsHtml}
+      </ul>
+
+      ${topItem ? `
+        <button class="reserve-map-btn" onclick="addToCart('${topItem.id}')">
+          Reserve top meal
+        </button>
+      ` : ''}
+    </div>
+  `;
+}
 
     function addVendorMarkers() {
       if (!window.allMeals || !window.allMeals.length || !discountMap) return;
@@ -771,6 +875,7 @@
       });
 
       updateLocationBadge(`${vendors.length} nearby stall${vendors.length === 1 ? '' : 's'} shown`);
+      renderNearbyVendorList(vendors);
     }
 
     function setUserMarker(position) {
