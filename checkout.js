@@ -34,6 +34,12 @@ function displayOrderSummary() {
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
     const totalPrice = cart.reduce((sum, item) => sum + (parseFloat(item.discountPrice) * item.quantity), 0);
 
+    console.log('=== DISPLAY ORDER SUMMARY ===');
+    console.log('Cart items:', cart);
+    cart.forEach((item, idx) => {
+        console.log(`Item ${idx}: ${item.foodName}, vendorId: ${item.vendorId}, vendorInfo: ${item.vendorInfo?.shopName}`);
+    });
+
     document.getElementById('totalItems').innerText = totalItems;
     document.getElementById('totalPrice').innerText = totalPrice.toFixed(2);
 }
@@ -59,6 +65,10 @@ window.confirmPayment = async function() {
         alert('Your cart is empty!');
         return;
     }
+
+    console.log('=== CHECKOUT START ===');
+    console.log('Full cart:', cart);
+    console.log('Cart items with vendorIds:', cart.map(item => ({ foodName: item.foodName, vendorId: item.vendorId })));
 
     try {
         // Disable button to prevent double-click
@@ -90,34 +100,57 @@ window.confirmPayment = async function() {
         const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
         const totalPrice = cart.reduce((sum, item) => sum + (parseFloat(item.discountPrice) * item.quantity), 0);
 
-        // Create order in Firebase
-        // ⭐ KEY CHANGE: Added userName, vendorId, vendorName, vendorLocation, and originalPrice
-        const orderData = {
-            userId: currentUser.uid,
-            userName: userName,  // ✅ Added user name
-            userEmail: currentUser.email,
-            vendorId: cart[0].vendorId,  // ✅ Added vendor ID (assuming single vendor per order)
-            vendorName: cart[0].vendorInfo ? cart[0].vendorInfo.shopName : 'Unknown Vendor',  // ✅ Added vendor name
-            vendorLocation: cart[0].vendorInfo ? cart[0].vendorInfo.location : '',  // ✅ Added vendor location
-            items: cart.map(item => ({
-                foodId: item.id,
-                foodName: item.foodName,
-                quantity: item.quantity,
-                price: parseFloat(item.discountPrice),  // The discounted price customer pays
-                originalPrice: parseFloat(item.originalPrice || 0),  // ✅ FIXED: Directly use originalPrice from cart (which comes from foodItems)
-                imageURL: item.imageURL,
-                category: item.category
-            })),
-            totalAmount: totalPrice,
-            totalItems: totalItems,
-            paymentMethod: selectedPaymentMethod,
-            status: 'pending',
-            paymentStatus: 'paid',
-            createdAt: new Date(),
-            pickupTime: 'Before 6:00 PM'  // ✅ Added pickup time
-        };
+        // Group cart items by vendorId for multi-vendor support
+        const vendorGroups = {};
+        cart.forEach(item => {
+            const vendorId = item.vendorId;
+            if (!vendorGroups[vendorId]) {
+                vendorGroups[vendorId] = [];
+            }
+            vendorGroups[vendorId].push(item);
+        });
 
-        const orderRef = await addDoc(collection(db, "orders"), orderData);
+        console.log('Vendor Groups:', vendorGroups);
+        console.log('Number of vendors:', Object.keys(vendorGroups).length);
+
+        // Create separate order for each vendor
+        const orderRefs = [];
+        for (const vendorId in vendorGroups) {
+            const vendorItems = vendorGroups[vendorId];
+            const vendorTotalItems = vendorItems.reduce((sum, item) => sum + item.quantity, 0);
+            const vendorTotalPrice = vendorItems.reduce((sum, item) => sum + (parseFloat(item.discountPrice) * item.quantity), 0);
+
+            const orderData = {
+                userId: currentUser.uid,
+                userName: userName,
+                userEmail: currentUser.email,
+                vendorId: vendorId,
+                vendorName: vendorItems[0].vendorInfo ? vendorItems[0].vendorInfo.shopName : 'Unknown Vendor',
+                vendorLocation: vendorItems[0].vendorInfo ? vendorItems[0].vendorInfo.location : '',
+                items: vendorItems.map(item => ({
+                    foodId: item.id,
+                    foodName: item.foodName,
+                    quantity: item.quantity,
+                    price: parseFloat(item.discountPrice),
+                    originalPrice: parseFloat(item.originalPrice || 0),
+                    imageURL: item.imageURL,
+                    category: item.category
+                })),
+                totalAmount: vendorTotalPrice,
+                totalItems: vendorTotalItems,
+                paymentMethod: selectedPaymentMethod,
+                status: 'pending',
+                paymentStatus: 'paid',
+                createdAt: new Date(),
+                pickupTime: 'Before 6:00 PM'
+            };
+
+            const orderRef = await addDoc(collection(db, "orders"), orderData);
+            orderRefs.push(orderRef);
+            console.log(`Created order for vendor ${vendorId}:`, orderRef.id);
+        }
+
+        console.log('Total orders created:', orderRefs.length);
 
         // Update quantities in foodItems collection with transaction to prevent negative values
         for (const item of cart) {

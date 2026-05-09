@@ -17,6 +17,8 @@
   <!-- QR SCANNER LIBRARY -->
   <script src="https://unpkg.com/html5-qrcode"></script>
 
+
+
   <style>
     :root {
       --primary-green: #2E7D32;
@@ -107,6 +109,20 @@
       max-width: 1100px;
       margin: 0 auto;
       padding: 20px 8%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: calc(100vh - 120px);
+      padding-bottom: 40px;
+    }
+
+    .stats-row,
+    .global-scan-section,
+    .tabs,
+    #order-container,
+    .page-header {
+      width: 100%;
+      max-width: 1100px;
     }
 
     .page-header h2 {
@@ -161,6 +177,7 @@
       border-radius: 14px;
       margin-bottom: 25px;
       width: fit-content;
+      align-self: flex-start;
     }
 
     .tab-btn {
@@ -179,6 +196,49 @@
       background: white;
       color: var(--primary-green);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .global-scan-section {
+      text-align: center;
+      margin: 30px 0;
+      padding: 30px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      border-radius: var(--radius);
+      border: 1px solid var(--glass-border);
+    }
+
+    .btn-global-scan {
+      background: var(--primary-green);
+      color: white;
+      border: none;
+      padding: 16px 32px;
+      border-radius: 16px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      transition: 0.3s;
+      box-shadow: 0 4px 16px rgba(46, 125, 50, 0.3);
+    }
+
+    .btn-global-scan:hover {
+      background: var(--deep-sage);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+    }
+
+    .btn-global-scan i {
+      font-size: 1.5rem;
+    }
+
+    .scan-hint {
+      color: #666;
+      font-size: 0.9rem;
+      margin-top: 12px;
+      font-style: italic;
     }
 
     .res-card {
@@ -210,6 +270,13 @@
       font-size: 0.85rem;
       color: var(--deep-sage);
       opacity: 0.8;
+    }
+
+    .order-details {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
     }
 
     .order-details strong {
@@ -373,6 +440,69 @@
       font-size: 1.5rem;
     }
 
+    .scanner-modal-box {
+      max-width: 500px;
+    }
+
+    #qr-reader {
+      width: 100%;
+      max-width: 400px;
+      margin: 20px auto;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .scanner-hint {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .order-details {
+      background: #f5f5f5;
+      padding: 10px;
+      border-radius: 18px;
+      margin-top: 1%px;
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    .order-details p {
+      margin: 15px 15px;
+      font-size: 0.9rem;
+    }
+
+    .order-details strong {
+      color: var(--deep-sage);
+    }
+
+    /* Loading */
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .loading.show {
+      display: block;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid var(--primary-green);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
     .modal-box p {
       font-size: 0.95rem;
       color: #555;
@@ -411,25 +541,9 @@
       background: #c62828;
     }
 
-    #qr-reader {
-      width: 100%;
-      max-width: 320px;
-      margin: 20px auto;
-      border-radius: 18px;
-      overflow: hidden;
-    }
 
-    #scanner-order-text {
-      margin-top: 10px;
-      font-weight: 700;
-      color: var(--primary-green);
-    }
 
-    .scanner-hint {
-      color: #666;
-      font-size: 0.9rem;
-      margin-top: 8px;
-    }
+
 
     @media (max-width: 768px) {
       .stats-row {
@@ -476,22 +590,45 @@
     </div>
   </div>
 
-  <!-- QR Scanner Modal -->
+  <!-- Global QR Scanner Modal -->
   <div class="modal-overlay" id="scanner-modal">
-    <div class="modal-box">
-      <h3>Scan Student QR</h3>
+    <div class="modal-box scanner-modal-box">
+      <h3>Scan Customer QR Code</h3>
 
       <p class="scanner-hint">
-        Ask the student to open their QR from My Orders.
+        Position the QR code within the camera frame. The scanner will automatically detect and process the order.
       </p>
-
-      <p id="scanner-order-text"></p>
 
       <div id="qr-reader"></div>
 
+      <div class="loading" id="scanner-loading">
+        <div class="spinner"></div>
+        <p>Processing QR code...</p>
+      </div>
+
       <div class="modal-buttons">
-        <button class="btn-modal btn-cancel-modal" onclick="closeScannerModal()">
+        <button class="btn-modal btn-cancel-modal" onclick="closeGlobalScanner()">
           Close Scanner
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Confirmation Modal -->
+  <div class="modal-overlay" id="confirmation-modal">
+    <div class="modal-box">
+      <h3>Confirm Order Collection</h3>
+
+      <div class="order-details" id="order-details">
+        <!-- Order details will be populated here -->
+      </div>
+
+      <div class="modal-buttons">
+        <button class="btn-modal btn-cancel-modal" onclick="closeConfirmationModal()">
+          Cancel
+        </button>
+        <button class="btn-modal btn-confirm-modal" id="confirm-collect-btn" onclick="confirmCollection()">
+          Confirm Collect
         </button>
       </div>
     </div>
@@ -527,6 +664,15 @@
         <p>Cancelled</p>
         <h3 id="stat-cancelled">0</h3>
       </div>
+    </div>
+
+    <!-- Global QR Scanner Button -->
+    <div class="global-scan-section">
+      <button class="btn-global-scan" onclick="openGlobalScanner()">
+        <i class="ph-qr-code"></i>
+        Scan QR Code
+      </button>
+      <p class="scan-hint">Scan any customer's QR code to collect their order</p>
     </div>
 
     <div class="tabs">

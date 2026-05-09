@@ -16,6 +16,7 @@ let currentVendor = null;
 let allOrders = [];
 let pendingAction = null;
 let html5QrScanner = null;
+let scannedOrderId = null;
 
 // Auth check - ensure vendor is logged in
 onAuthStateChanged(auth, (user) => {
@@ -179,10 +180,6 @@ function createOrderCard(order, viewType) {
         actionHTML = `<span class="status-label ${labelClass}">${statusText}</span>`;
     } else {
         actionHTML = `
-            <button class="btn-action btn-collect" onclick="openScannerModal('${order.id}')">
-                Scan QR
-            </button>
-
             <button class="btn-action btn-cancel" onclick="openAppModal('${order.id}', 'cancelled')">
                 Cancel
             </button>
@@ -215,20 +212,17 @@ function createOrderCard(order, viewType) {
     `;
 }
 
-// QR SCANNER
-window.openScannerModal = async function(expectedOrderId) {
+// Global QR Scanner
+window.openGlobalScanner = async function() {
     const modal = document.getElementById('scanner-modal');
     const scannerBox = document.getElementById('qr-reader');
-    const scannerText = document.getElementById('scanner-order-text');
 
-    if (!modal || !scannerBox || !scannerText) {
+    if (!modal || !scannerBox) {
         showAppToast("Scanner modal not found in HTML.", "cancelled");
         return;
     }
 
     modal.style.display = 'flex';
-    scannerText.innerText = `Scan QR for Order #${expectedOrderId.substring(0, 8)}`;
-
     scannerBox.innerHTML = "";
 
     html5QrScanner = new Html5Qrcode("qr-reader");
@@ -244,42 +238,147 @@ window.openScannerModal = async function(expectedOrderId) {
                 }
             },
             async (decodedText) => {
-                await handleScannedQR(decodedText, expectedOrderId);
+                await handleScannedQR(decodedText);
             },
             () => {}
         );
     } catch (error) {
-        console.error(error);
+        console.error("Scanner start error:", error);
         showAppToast("Camera permission failed or scanner cannot start.", "cancelled");
     }
 };
 
-async function handleScannedQR(scannedOrderId, expectedOrderId) {
+async function handleScannedQR(decodedText) {
     try {
-        scannedOrderId = scannedOrderId.trim();
+        const orderId = decodedText.trim();
+        console.log('Scanned order ID:', orderId);
 
-        if (scannedOrderId !== expectedOrderId) {
-            showAppToast("QR does not match this order.", "cancelled");
-            return;
+        // Play beep sound
+        playBeep();
+
+        // Vibrate (mobile)
+        if (navigator.vibrate) {
+            navigator.vibrate(200);
         }
 
+        // Stop scanner
         if (html5QrScanner) {
             await html5QrScanner.stop();
             html5QrScanner.clear();
             html5QrScanner = null;
         }
 
-        closeScannerModal();
+        // Show loading
+        document.getElementById('scanner-loading').classList.add('show');
 
-        await verifyAndCompleteOrder(scannedOrderId);
+        // Fetch and validate order
+        await fetchAndValidateOrder(orderId);
 
     } catch (error) {
-        console.error(error);
-        showAppToast("QR verification failed.", "cancelled");
+        console.error("QR scan error:", error);
+        showAppToast("Error processing QR code.", "cancelled");
+        closeGlobalScanner();
     }
 }
 
-window.closeScannerModal = async function() {
+async function fetchAndValidateOrder(orderId) {
+    try {
+        const orderRef = doc(db, "orders", orderId);
+        const orderSnap = await getDoc(orderRef);
+
+        if (!orderSnap.exists()) {
+            throw new Error("Order not found");
+        }
+
+        const orderData = orderSnap.data();
+
+        // Validate vendor
+        if (orderData.vendorId !== currentVendor.uid) {
+            throw new Error("This order does not belong to your stall");
+        }
+
+        // Validate status
+        if (orderData.status !== 'pending') {
+            throw new Error("This order is no longer active");
+        }
+
+        // Store order data and show confirmation
+        scannedOrderId = orderId;
+        showConfirmationModal(orderData);
+
+    } catch (error) {
+        console.error("Order validation error:", error);
+        showAppToast(error.message, "cancelled");
+
+        // Hide loading and stop scanner for invalid QR
+        document.getElementById('scanner-loading').classList.remove('show');
+        closeGlobalScanner();
+    }
+}
+
+function showConfirmationModal(orderData) {
+    document.getElementById('scanner-loading').classList.remove('show');
+    document.getElementById('scanner-modal').style.display = 'none';
+
+    const detailsDiv = document.getElementById('order-details');
+    const totalItems = orderData.totalItems || (orderData.items ? orderData.items.reduce((sum, item) => sum + (item.quantity || 0), 0) : 0);
+    const customerName = orderData.userName || orderData.customerName || orderData.name || 'N/A';
+    const totalAmount = typeof orderData.totalAmount === 'number' ? orderData.totalAmount : (typeof orderData.total === 'number' ? orderData.total : 0);
+
+    detailsDiv.innerHTML = `
+        <p><strong>Customer:</strong> ${customerName}</p>
+        <p><strong>Order ID:</strong> ${scannedOrderId.substring(0, 8)}</p>
+        <p><strong>Items:</strong> ${totalItems} item${totalItems !== 1 ? 's' : ''}</p>
+        <p><strong>Total:</strong> RM ${totalAmount.toFixed(2)}</p>
+    `;
+
+    document.getElementById('confirmation-modal').style.display = 'flex';
+}
+
+window.closeConfirmationModal = function() {
+    document.getElementById('confirmation-modal').style.display = 'none';
+    scannedOrderId = null;
+};
+
+window.confirmCollection = async function() {
+    if (!scannedOrderId) return;
+
+    try {
+        // Update order status
+        const orderRef = doc(db, "orders", scannedOrderId);
+        await updateDoc(orderRef, {
+            status: 'completed',
+            completedAt: Timestamp.now(),
+            verifiedByQR: true
+        });
+
+        // Close modal
+        document.getElementById('confirmation-modal').style.display = 'none';
+
+        // Update local data
+        const orderIndex = allOrders.findIndex(o => o.id === scannedOrderId);
+        if (orderIndex !== -1) {
+            allOrders[orderIndex].status = 'completed';
+            allOrders[orderIndex].verifiedByQR = true;
+        }
+
+        // Update stats and refresh display
+        updateStats();
+        const activeTab = document.querySelector('.tab-btn.active').id;
+        showTab(activeTab === 'tab-active' ? 'active' : 'history');
+
+        // Show success message
+        showAppToast("Order collected successfully!", "collected");
+
+        scannedOrderId = null;
+
+    } catch (error) {
+        console.error("Collection confirmation error:", error);
+        showAppToast("Error confirming collection: " + error.message, "cancelled");
+    }
+};
+
+window.closeGlobalScanner = async function() {
     const modal = document.getElementById('scanner-modal');
 
     if (html5QrScanner) {
@@ -289,7 +388,6 @@ window.closeScannerModal = async function() {
         } catch (error) {
             console.log("Scanner already stopped.");
         }
-
         html5QrScanner = null;
     }
 
@@ -298,52 +396,30 @@ window.closeScannerModal = async function() {
     }
 };
 
-async function verifyAndCompleteOrder(orderId) {
+// Play beep sound
+function playBeep() {
     try {
-        const orderRef = doc(db, "orders", orderId);
-        const orderSnap = await getDoc(orderRef);
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
 
-        if (!orderSnap.exists()) {
-            showAppToast("Invalid QR. Order not found.", "cancelled");
-            return;
-        }
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
 
-        const orderData = orderSnap.data();
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+        oscillator.type = 'sine';
 
-        if (orderData.vendorId !== currentVendor.uid) {
-            showAppToast("This order does not belong to your stall.", "cancelled");
-            return;
-        }
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
 
-        if (orderData.status !== 'pending') {
-            showAppToast("This QR is no longer active.", "cancelled");
-            return;
-        }
-
-        await updateDoc(orderRef, {
-            status: 'completed',
-            completedAt: Timestamp.now(),
-            verifiedByQR: true
-        });
-
-        const orderIndex = allOrders.findIndex(o => o.id === orderId);
-
-        if (orderIndex !== -1) {
-            allOrders[orderIndex].status = 'completed';
-            allOrders[orderIndex].verifiedByQR = true;
-        }
-
-        updateStats();
-        showAppToast("QR verified. Order marked as collected!", "collected");
-
-        const activeTab = document.querySelector('.tab-btn.active').id;
-        showTab(activeTab === 'tab-active' ? 'active' : 'history');
-
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.2);
     } catch (error) {
-        console.error("Error verifying QR:", error);
-        showAppToast("Error: " + error.message, "cancelled");
+        console.log("Beep sound not supported");
     }
 }
+
+
 
 // Open confirmation modal for cancel only
 window.openAppModal = function(orderId, action) {
