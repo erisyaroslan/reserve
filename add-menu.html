@@ -5,12 +5,10 @@
     <meta charset="UTF-8" />
     <title>ReServe | Add New Meal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Playfair+Display:wght@700;900&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-
+    
     <style>
         :root {
             --primary-green: #2E7D32;
@@ -92,7 +90,6 @@
             text-align: left;
         }
 
-        /* FIXED MOCK IMG: No more broken link */
         .mock-img {
             width: 100%;
             height: 160px;
@@ -180,51 +177,53 @@
             cursor: pointer;
         }
 
-        /* FANCY POPUP DESIGN (UNTOUCHED AS REQUESTED) */
-        .premium-popup {
-            border-radius: 30px !important;
-            background: #ffffff !important;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
-            border: none !important;
+        /* Location Section Styles */
+        .location-area { margin-bottom: 22px; }
+        .location-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
         }
-
-        .premium-title {
-            font-family: 'Playfair Display', serif !important;
-            font-weight: 700 !important;
-            color: #1a3c34 !important;
+        .location-header label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--darker-green);
         }
-
-        .premium-confirm-btn {
-            background: #2E7D32 !important;
-            color: white !important;
-            border: none !important;
-            padding: 12px 30px !important;
-            border-radius: 50px !important;
-            font-weight: 600 !important;
-            margin: 8px !important;
-            cursor: pointer;
-            transition: transform 0.2s;
+        #vendorLocationMap {
+            width: 100%;
+            height: 280px;
+            border-radius: 18px;
+            border: 1px solid #EAEAEA;
+            background: #eee;
         }
-
-        .premium-cancel-btn {
-            background: #f8f9f8 !important;
-            color: #555 !important;
-            border: none !important;
-            padding: 12px 30px !important;
-            border-radius: 50px !important;
-            font-weight: 600 !important;
-            margin: 8px !important;
+        .current-location-btn {
+            border: none;
+            background: var(--darker-green);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.75rem;
             cursor: pointer;
         }
-
-        .premium-confirm-btn:hover {
-            background: #1b5e20 !important;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
+        .location-preview {
+            margin-top: 12px;
+            background: #F7FAF8;
+            border: 1px solid #E6F4EA;
+            border-radius: 14px;
+            padding: 14px;
+            font-size: 0.85rem;
+            color: #2F5233;
         }
 
-        .swal2-backdrop-show {
-            backdrop-filter: blur(10px) !important;
+        /* Custom Swal Styles */
+        .premium-popup { border-radius: 25px !important; }
+        .premium-confirm-btn { 
+            background: var(--darker-green) !important; 
+            color: white !important; 
+            border-radius: 10px !important; 
+            padding: 10px 25px !important;
         }
     </style>
 </head>
@@ -246,29 +245,18 @@
             <div class="meal-card-mockup">
                 <div class="mock-img" id="prevImg" style="background-image: url('image/nasilemak.jpg');"></div>
                 <div class="mock-details" style="padding: 15px;">
-                    <p id="prevCat"
-                        style="font-size: 0.65rem; font-weight: 800; color: var(--primary-green); text-transform: uppercase;">
-                        SNACKS</p>
+                    <p id="prevCat" style="font-size: 0.65rem; font-weight: 800; color: var(--primary-green); text-transform: uppercase;">SNACKS</p>
                     <h4 id="prevName" style="font-size: 1.1rem; color: #333; margin: 5px 0;">Meal Name</h4>
-                    <p id="prevDesc"
-                        style="font-size: 0.8rem; color: #777; height: 2.5em; overflow: hidden; margin-bottom: 15px;">
-                        Description preview...</p>
+                    <p id="prevDesc" style="font-size: 0.8rem; color: #777; height: 2.5em; overflow: hidden; margin-bottom: 15px;">Description preview...</p>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
-                            <span id="prevOld"
-                                style="text-decoration: line-through; color: #bbb; font-size: 0.8rem; margin-right: 5px;">RM
-                                0.00</span>
-                            <span id="prevNew"
-                                style="font-weight: 800; color: var(--darker-green); font-size: 1.1rem;">RM 0.00</span>
+                            <span id="prevOld" style="text-decoration: line-through; color: #bbb; font-size: 0.8rem; margin-right: 5px;">RM 0.00</span>
+                            <span id="prevNew" style="font-weight: 800; color: var(--darker-green); font-size: 1.1rem;">RM 0.00</span>
                         </div>
-                        <span id="prevQty"
-                            style="font-size: 0.7rem; background: #E8F5E9; padding: 4px 8px; border-radius: 5px; color: var(--primary-green);">0
-                            Left</span>
+                        <span id="prevQty" style="font-size: 0.7rem; background: #E8F5E9; padding: 4px 8px; border-radius: 5px; color: var(--primary-green);">0 Left</span>
                     </div>
                 </div>
             </div>
-            <p style="margin-top: 15px; font-size: 0.7rem; color: #1B4332; opacity: 0.7; font-style: italic;">*This is
-                how students will see your meal.</p>
         </aside>
 
         <main class="form-pane">
@@ -277,25 +265,19 @@
 
             <form id="addMealForm">
                 <div style="margin-bottom: 18px;">
-                    <label
-                        style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">MEAL
-                        PHOTO</label>
+                    <label style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">MEAL PHOTO</label>
                     <div class="file-upload-box">
                         <input type="file" id="mealImageInput" accept="image/*" onchange="updatePreviewImage(this)">
                     </div>
                 </div>
 
                 <div style="margin-bottom: 18px;">
-                    <label
-                        style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">MEAL
-                        NAME</label>
-                    <input type="text" id="mealName" placeholder="e.g. Egg Mayo Sandwich" oninput="updatePreview()"
-                        required>
+                    <label style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">MEAL NAME</label>
+                    <input type="text" id="mealName" placeholder="e.g. Egg Mayo Sandwich" oninput="updatePreview()" required>
                 </div>
 
                 <div style="margin-bottom: 18px;">
-                    <label
-                        style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">CATEGORY</label>
+                    <label style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">CATEGORY</label>
                     <select id="category" onchange="updatePreview()">
                         <option value="Snacks">Snacks</option>
                         <option value="Hot Meal">Hot Meal</option>
@@ -304,44 +286,47 @@
                 </div>
 
                 <div style="margin-bottom: 18px;">
-                    <label
-                        style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">DESCRIPTION</label>
-                    <textarea id="description" rows="3" placeholder="Brief description..."
-                        oninput="updatePreview()"></textarea>
+                    <label style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">DESCRIPTION</label>
+                    <textarea id="description" rows="3" placeholder="Brief description..." oninput="updatePreview()"></textarea>
                 </div>
 
                 <div class="price-grid">
                     <div style="margin-bottom: 18px;">
-                        <label
-                            style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">ORIGINAL
-                            (RM)</label>
+                        <label style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">ORIGINAL (RM)</label>
                         <input type="number" id="oldPrice" placeholder="5.00" step="0.01" oninput="updatePreview()">
                     </div>
                     <div style="margin-bottom: 18px;">
-                        <label
-                            style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">SURPLUS
-                            (RM)</label>
-                        <input type="number" id="newPrice" placeholder="3.00" step="0.01" oninput="updatePreview()"
-                            style="color: var(--primary-green); font-weight: 800;">
+                        <label style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">SURPLUS (RM)</label>
+                        <input type="number" id="newPrice" placeholder="3.00" step="0.01" oninput="updatePreview()" style="color: var(--primary-green); font-weight: 800;">
                     </div>
                 </div>
 
                 <div style="margin-bottom: 18px;">
-                    <label
-                        style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">QUANTITY</label>
+                    <label style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--darker-green); margin-bottom: 8px;">QUANTITY</label>
                     <input type="number" id="qty" placeholder="10" oninput="updatePreview()">
+                </div>
+
+                <div class="location-area">
+                    <div class="location-header">
+                        <label>STALL LOCATION</label>
+                        <button type="button" id="useCurrentLocationBtn" class="current-location-btn">Locate your location</button>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <input type="text" id="stallAddress" placeholder="Enter Stall/Vendor Name (e.g. Kak Kiah Nasi Lemak)">
+                    </div>
+                    <div id="vendorLocationMap"></div>
+                    <div class="location-preview" id="locationPreview">Tap the map to pin your location.</div>
                 </div>
 
                 <div class="action-btns">
                     <button type="button" class="btn-add" id="saveMealBtn">Add New Meal</button>
-                    <button type="button" class="btn-remove" onclick="history.back()">Remove</button>
+                    <button type="button" class="btn-remove" onclick="history.back()">Cancel</button>
                 </div>
             </form>
         </main>
     </div>
 
     <script>
-        // Update text previews
         function updatePreview() {
             document.getElementById('prevName').innerText = document.getElementById('mealName').value || "Meal Name";
             document.getElementById('prevCat').innerText = document.getElementById('category').value;
@@ -351,7 +336,6 @@
             document.getElementById('prevQty').innerText = (document.getElementById('qty').value || 0) + " Left";
         }
 
-        // Update image preview instantly
         function updatePreviewImage(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -363,8 +347,11 @@
         }
     </script>
 
-    <script type="module" src="firebase-config.js"></script>
     <script type="module" src="addmenu-logic.js"></script>
+    <!-- REPLACE YOUR_API_KEY WITH YOUR ACTUAL GOOGLE API KEY -->
+   <!-- Add &loading=async and remove YOUR_API_KEY with your real key -->
+<script  async
+  defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBKiMQHafUNOXBXPeppGmLsX8PnQjNIQCA&callback=initVendorLocationMap&libraries=marker">></script>
 </body>
-
 </html>

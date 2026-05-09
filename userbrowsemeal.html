@@ -203,6 +203,62 @@
       background: linear-gradient(135deg, #F5FFF5, #EAF7EA);
     }
 
+    .map-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px 20px 0;
+    }
+
+    .map-action-btn {
+      border: none;
+      background: var(--primary-green);
+      color: white;
+      padding: 12px 18px;
+      margin-bottom: 20px;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .map-action-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    #mapStatus {
+      color: #4B5E4E;
+      font-size: 0.9rem;
+      opacity: 0.9;
+      margin-bottom: 20px;
+    }
+
+    .map-popup ul {
+      margin: 10px 0 0;
+      padding-left: 18px;
+      color: #2f3e2f;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    .map-popup .reserve-map-btn {
+      margin-top: 10px;
+      padding: 10px 14px;
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      background: #2E7D32;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .map-popup .reserve-map-btn:hover {
+      background: #1B4332;
+    }
+
     .map-helper {
       padding: 12px 20px 18px;
       font-size: 0.84rem;
@@ -508,18 +564,22 @@
       <div class="category" data-category="Western">Western</div>
     </div>
 
-    <!-- DISCOUNTED VENDORS MAP -->
-    <section class="map-section" aria-label="Nearby discounted meal vendors map">
+    <!-- NEARBY VENDOR STALL MAP -->
+    <section class="map-section" aria-label="Nearby vendor stalls map">
       <div class="map-header">
         <div class="map-title">
-          <h2>Nearby Eco Deals</h2>
-          <p>Find discounted meals from vendors around your current location.</p>
+          <h2>Nearby Vendor Stalls</h2>
+          <p>Explore available surplus food locations and reserve the closest vendors first.</p>
         </div>
         <div id="locationBadge" class="location-badge">Locating you...</div>
       </div>
+      <div class="map-actions">
+        <button id="locateUserBtn" type="button" class="map-action-btn">Use My Current Location</button>
+        <div id="mapStatus">Finding your nearest vendors…</div>
+      </div>
       <div id="discountMap"></div>
       <div class="map-helper">
-        <strong>Tip:</strong> Click a marker to view the vendor, discount, and available meal deal.
+        <strong>Tip:</strong> Click any stall marker to view the vendor, current food, quantity, and reserve it directly.
       </div>
     </section>
 
@@ -569,103 +629,168 @@
     document.addEventListener("DOMContentLoaded", () => {
       const toggle = document.getElementById("aiAssistantToggle");
       const panel = document.getElementById("aiAssistantPanel");
-      if (!toggle || !panel) return;
+      if (toggle && panel) {
+        toggle.addEventListener("click", () => {
+          panel.classList.toggle("open");
+        });
+      }
 
-      toggle.addEventListener("click", () => {
-        panel.classList.toggle("open");
-      });
+      document.getElementById("locateUserBtn")?.addEventListener("click", locateUser);
     });
 
     let discountMap;
+    let userLocation = null;
+    let infoWindow;
+    const vendorMarkers = [];
 
-    const discountedVendors = [
-      {
-        name: "Green Bowl Kitchen",
-        discount: "25% OFF",
-        meal: "Rescue Rice Bowl",
-        description: "Fresh surplus produce meals",
-        latOffset: 0.0056,
-        lngOffset: 0.0031
-      },
-      {
-        name: "Campus Food Hub",
-        discount: "40% OFF",
-        meal: "Late Lunch Set",
-        description: "Limited discounted hot meals",
-        latOffset: -0.0042,
-        lngOffset: 0.0025
-      },
-      {
-        name: "Eco Bites Stall",
-        discount: "30% OFF",
-        meal: "Snack Saver Pack",
-        description: "End-of-day snack bundles",
-        latOffset: 0.0037,
-        lngOffset: -0.0048
-      }
-    ];
+    function updateLocationBadge(text) {
+      const badge = document.getElementById("locationBadge");
+      if (badge) badge.textContent = text;
+      const status = document.getElementById("mapStatus");
+      if (status) status.textContent = text;
+    }
+
+    function distanceBetween(lat1, lng1, lat2, lng2) {
+      const toRad = (value) => value * Math.PI / 180;
+      const R = 6371;
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lng2 - lng1);
+      const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    function formatDistance(distance) {
+      if (distance === null || distance === undefined) return 'Distance unknown';
+      return distance < 1 ? `${Math.round(distance * 1000)} m` : `${distance.toFixed(1)} km`;
+    }
+
+    function clearVendorMarkers() {
+      vendorMarkers.forEach(marker => marker.setMap(null));
+      vendorMarkers.length = 0;
+    }
+
+    function buildVendorStops() {
+      if (!window.allMeals || !window.allMeals.length) return [];
+
+      const mapByVendor = new Map();
+      window.allMeals.forEach((meal) => {
+        const lat = parseFloat(meal.latitude);
+        const lng = parseFloat(meal.longitude);
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
+        const vendorKey = meal.vendorId || meal.id;
+        const item = {
+          id: meal.id,
+          foodName: meal.foodName,
+          quantity: meal.quantity,
+          pickupTime: meal.pickupTime || 'ASAP',
+          price: meal.discountPrice || meal.originalPrice || '',
+          vendorName: meal.vendorName || 'Vendor'
+        };
+
+        if (!mapByVendor.has(vendorKey)) {
+          mapByVendor.set(vendorKey, {
+            vendorId: meal.vendorId,
+            vendorName: meal.vendorName || item.vendorName,
+            stallAddress: meal.stallAddress || 'Stall location not set',
+            latitude: lat,
+            longitude: lng,
+            items: [item],
+            distance: null
+          });
+        } else {
+          mapByVendor.get(vendorKey).items.push(item);
+        }
+      });
+
+      const vendors = Array.from(mapByVendor.values());
+      vendors.forEach((vendor) => {
+        if (userLocation) {
+          vendor.distance = distanceBetween(userLocation.lat, userLocation.lng, vendor.latitude, vendor.longitude);
+        }
+      });
+
+      return vendors.sort((a, b) => {
+        if (a.distance == null) return 1;
+        if (b.distance == null) return -1;
+        return a.distance - b.distance;
+      });
+    }
 
     function buildPopup(vendor) {
+      const itemsHtml = vendor.items.slice(0, 3).map(item => `
+        <li>${item.foodName} • ${item.quantity} left • ${item.pickupTime}</li>
+      `).join('');
+
+      const topItem = vendor.items[0];
       return `
         <div class="map-popup">
-          <h4>${vendor.name}</h4>
-          <p>${vendor.description}<br>${vendor.meal}</p>
-          <span class="discount-tag">${vendor.discount}</span>
+          <h4>${vendor.vendorName}</h4>
+          <p>${vendor.stallAddress}</p>
+          <p>${vendor.distance !== null ? formatDistance(vendor.distance) : 'Distance unavailable'}</p>
+          <ul>${itemsHtml}</ul>
+          ${topItem ? `<button class="reserve-map-btn" onclick="addToCart('${topItem.id}')">Reserve top meal</button>` : ''}
         </div>
       `;
     }
 
-    function addVendorMarkers(currentPosition) {
-      const infoWindow = new google.maps.InfoWindow();
+    function addVendorMarkers() {
+      if (!window.allMeals || !window.allMeals.length || !discountMap) return;
 
-      discountedVendors.forEach((vendor) => {
+      clearVendorMarkers();
+      infoWindow = new google.maps.InfoWindow();
+
+      const vendors = buildVendorStops();
+      if (!vendors.length) {
+        updateLocationBadge('No vendor locations available');
+        return;
+      }
+
+      vendors.forEach((vendor) => {
         const marker = new google.maps.Marker({
-          position: {
-            lat: currentPosition.lat + vendor.latOffset,
-            lng: currentPosition.lng + vendor.lngOffset
-          },
+          position: { lat: vendor.latitude, lng: vendor.longitude },
           map: discountMap,
-          title: vendor.name,
+          title: vendor.vendorName,
           icon: {
             path: google.maps.SymbolPath.CIRCLE,
-            scale: 9,
-            fillColor: "#2E7D32",
+            scale: 10,
+            fillColor: '#2E7D32',
             fillOpacity: 1,
-            strokeColor: "#ffffff",
+            strokeColor: '#ffffff',
             strokeWeight: 2
           }
         });
 
-        marker.addListener("click", () => {
+        marker.addListener('click', () => {
           infoWindow.setContent(buildPopup(vendor));
           infoWindow.open(discountMap, marker);
         });
+
+        vendorMarkers.push(marker);
       });
+
+      updateLocationBadge(`${vendors.length} nearby stall${vendors.length === 1 ? '' : 's'} shown`);
     }
 
     function setUserMarker(position) {
       new google.maps.Marker({
         position,
         map: discountMap,
-        title: "You are here",
+        title: 'You are here',
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
-          scale: 10,
-          fillColor: "#1E88E5",
+          scale: 11,
+          fillColor: '#1E88E5',
           fillOpacity: 1,
-          strokeColor: "#ffffff",
+          strokeColor: '#ffffff',
           strokeWeight: 3
         }
       });
     }
 
-    function updateLocationBadge(text) {
-      const badge = document.getElementById("locationBadge");
-      if (badge) badge.textContent = text;
-    }
-
     function initDiscountMapWithPosition(position) {
-      discountMap = new google.maps.Map(document.getElementById("discountMap"), {
+      discountMap = new google.maps.Map(document.getElementById('discountMap'), {
         center: position,
         zoom: 14,
         disableDefaultUI: false,
@@ -675,35 +800,73 @@
       });
 
       setUserMarker(position);
-      addVendorMarkers(position);
-      updateLocationBadge("Nearby vendors loaded");
+      addVendorMarkers();
     }
 
     function initDiscountMap() {
-      const fallbackPosition = { lat: 14.5995, lng: 120.9842 };
+      const fallbackPosition = { lat: 3.0738, lng: 101.5183 };
 
       if (!navigator.geolocation) {
-        updateLocationBadge("Location unavailable");
+        updateLocationBadge('Location unavailable');
         initDiscountMapWithPosition(fallbackPosition);
         return;
       }
 
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          const currentPosition = {
-            lat: pos.coords.latitude,
-            lng: pos.coords.longitude
-          };
-          updateLocationBadge("You are here");
+          const currentPosition = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          userLocation = currentPosition;
+          updateLocationBadge('You are here');
+          if (window.updateMealDistances) window.updateMealDistances();
           initDiscountMapWithPosition(currentPosition);
         },
         () => {
-          updateLocationBadge("Using default area");
+          updateLocationBadge('Using default area');
           initDiscountMapWithPosition(fallbackPosition);
         },
-        { enableHighAccuracy: true, timeout: 8000 }
+        { enableHighAccuracy: true, timeout: 9000 }
       );
     }
+
+    function locateUser() {
+      if (!navigator.geolocation) {
+        updateLocationBadge('GPS unavailable');
+        return;
+      }
+
+      updateLocationBadge('Finding your location…');
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const currentPosition = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          userLocation = currentPosition;
+          if (window.updateMealDistances) window.updateMealDistances();
+          if (discountMap) {
+            discountMap.setCenter(currentPosition);
+            setUserMarker(currentPosition);
+            addVendorMarkers();
+          }
+          updateLocationBadge('Showing nearby vendors');
+        },
+        () => {
+          updateLocationBadge('Unable to access location');
+        },
+        { enableHighAccuracy: true, timeout: 9000 }
+      );
+    }
+
+    window.refreshVendorMap = function () {
+      if (!discountMap) return;
+      addVendorMarkers();
+    };
+
+    window.updateMapWithLocation = function (position) {
+      userLocation = position;
+      if (window.updateMealDistances) window.updateMealDistances();
+      if (discountMap) {
+        discountMap.setCenter(position);
+        addVendorMarkers();
+      }
+    };
 
     window.initDiscountMap = initDiscountMap;
   </script>

@@ -5,6 +5,7 @@ import { collection, getDocs, doc, getDoc, query, where } from "https://www.gsta
 let currentUser = null;
 let allMeals = [];
 let lastRenderedMeals = [];
+let userLocation = null;
 
 const GEMINI_MODEL = "gemini-1.5-flash";
 const AI_MAX_MEALS = 40;
@@ -24,8 +25,8 @@ async function loadMeals() {
     try {
         const mealsQuery = collection(db, "foodItems");
         const snapshot = await getDocs(mealsQuery);
-        allMeals = [];
-        window.allMeals = allMeals;
+        const rawMeals = [];
+        const vendorIds = new Set();
 
         console.log('Total documents found:', snapshot.size);
 
@@ -33,7 +34,6 @@ async function loadMeals() {
             const data = doc.data();
             console.log('Raw meal data:', data);
 
-            // Convert quantity to number - handle both string and number types
             let quantity = 0;
             if (typeof data.quantity === 'string') {
                 quantity = parseInt(data.quantity) || 0;
@@ -43,22 +43,54 @@ async function loadMeals() {
 
             console.log(`${data.foodName}: quantity = ${quantity} (type: ${typeof quantity})`);
 
-            // Only add meals with stock > 0
             if (quantity > 0) {
-                allMeals.push({
+                rawMeals.push({
                     id: doc.id,
                     ...data,
-                    quantity: quantity // Store as number
+                    quantity: quantity
                 });
+                if (data.vendorId) {
+                    vendorIds.add(data.vendorId);
+                }
             } else {
                 console.log(`Filtering out ${data.foodName} - quantity: ${quantity}`);
             }
         });
 
+        const vendorInfoMap = new Map();
+        await Promise.all(Array.from(vendorIds).map(async (vendorId) => {
+            try {
+                const vendorDoc = await getDoc(doc(db, "users", vendorId));
+                if (vendorDoc.exists()) {
+                    const vendorData = vendorDoc.data();
+                    vendorInfoMap.set(vendorId, {
+                        shopName: vendorData.shopName || 'Vendor',
+                        location: vendorData.location || ''
+                    });
+                }
+            } catch (error) {
+                console.warn('Unable to load vendor info for', vendorId, error);
+            }
+        }));
+
+        allMeals = rawMeals.map((meal) => {
+            const vendorInfo = vendorInfoMap.get(meal.vendorId) || {};
+            return {
+                ...meal,
+                vendorName: vendorInfo.shopName || meal.vendorName || 'Vendor',
+                vendorLocation: vendorInfo.location || meal.vendorLocation || ''
+            };
+        });
+
+        if (userLocation) {
+            updateAllMealDistances();
+        }
+
         console.log('Meals with stock > 0:', allMeals);
         window.allMeals = allMeals;
 
         displayMeals(allMeals);
+        if (window.refreshVendorMap) window.refreshVendorMap();
     } catch (error) {
         console.error("Error loading meals:", error);
         const container = document.getElementById('mealsContainer');
@@ -76,7 +108,8 @@ async function loadMeals() {
 // Display meals in the UI
 function displayMeals(meals) {
     const container = document.getElementById('mealsContainer');
-    lastRenderedMeals = meals;
+    const sortedMeals = sortMealsByDistance(meals);
+    lastRenderedMeals = sortedMeals;
 
     if (!container) {
         console.error('mealsContainer not found!');
@@ -94,7 +127,7 @@ function displayMeals(meals) {
         return;
     }
 
-    container.innerHTML = meals.map(meal => `
+    container.innerHTML = sortedMeals.map(meal => `
         <div class="meal-card" data-category="${meal.category || 'Other'}">
             <div class="meal-photo" style="background-image: url('${meal.imageURL || 'image/placeholder.jpg'}')"></div>
             <div class="meal-info">
@@ -103,7 +136,7 @@ function displayMeals(meals) {
                     ${meal.originalPrice ? `<span class="old-price">RM ${parseFloat(meal.originalPrice).toFixed(2)}</span>` : ''}
                     RM ${parseFloat(meal.discountPrice).toFixed(2)}
                 </p>
-                <p class="meal-cat">${meal.category || 'Other'} • ${meal.quantity} left</p>
+                <p class="meal-cat">${meal.category || 'Other'} • ${meal.quantity} left${meal.distance != null ? ` • ${formatDistance(meal.distance)}` : ''}</p>
                 ${meal.description ? `<p class="meal-desc">${meal.description}</p>` : ''}
             </div>
             <button class="btn-add" onclick="addToCart('${meal.id}')">Add +</button>
@@ -152,6 +185,46 @@ if (searchBox) {
         }
     });
 }
+
+function sortMealsByDistance(meals) {
+    if (!userLocation) return meals;
+    return [...meals].sort((a, b) => {
+        const aDistance = a.distance != null ? a.distance : Number.MAX_VALUE;
+        const bDistance = b.distance != null ? b.distance : Number.MAX_VALUE;
+        return aDistance - bDistance;
+    });
+}
+
+function computeMealDistance(meal) {
+    const lat = parseFloat(meal.latitude);
+    const lng = parseFloat(meal.longitude);
+    if (!userLocation || !Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+    return distanceBetween(userLocation.lat, userLocation.lng, lat, lng);
+}
+
+function updateAllMealDistances() {
+    if (!userLocation) return;
+    allMeals.forEach((meal) => {
+        meal.distance = computeMealDistance(meal);
+    });
+}
+
+function distanceBetween(lat1, lng1, lat2, lng2) {
+    const toRad = (value) => value * Math.PI / 180;
+    const R = 6371;
+    const dLat = toRad(lat2 - lat1);
+    const dLng = toRad(lng2 - lng1);
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
+
+function formatDistance(distance) {
+    if (distance == null) return '';
+    return distance < 1 ? `${Math.round(distance * 1000)} m` : `${distance.toFixed(1)} km`;
+}
+
+window.updateMealDistances = updateAllMealDistances;
 
 function addAIMessage(text, role = 'bot') {
     const box = document.getElementById('aiMessages');
