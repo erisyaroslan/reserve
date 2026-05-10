@@ -53,7 +53,8 @@ if (signupForm) {
                 location: location,
                 email: email,
                 role: 'vendor', // Critical for login logic later
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                profilePhotoURL: null
             });
 
             notify('Welcome!', 'Vendor account created! Opening Dashboard...');

@@ -151,7 +151,7 @@ window.uploadPhoto = function() {
 // Handle photo upload
 const photoInput = document.getElementById("photoInput");
 if (photoInput) {
-    photoInput.addEventListener("change", function() {
+    photoInput.addEventListener("change", async function() {
         const file = this.files[0];
         if (!file) return;
 
@@ -167,18 +167,52 @@ if (photoInput) {
             return;
         }
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const profilePhoto = document.getElementById("profilePhoto");
-            if (profilePhoto) {
-                profilePhoto.style.backgroundImage = `url('${e.target.result}')`;
+        try {
+            if (!currentUser) {
+                showNotification('Please log in to upload photos', 'error');
+                return;
             }
             
-            // TODO: Upload to Firebase Storage and save URL to Firestore
-            // For now, just show preview
-            showNotification('Photo preview updated (not saved to server)', 'success');
-        };
-        reader.readAsDataURL(file);
+            showNotification('Uploading photo...', 'success');
+            
+            // Convert image to base64 for storage in Firestore
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const base64Image = e.target.result;
+                
+                try {
+                    // Save the base64 image directly to Firestore
+                    const userRef = doc(db, "users", currentUser.uid);
+                    await updateDoc(userRef, {
+                        profilePhotoURL: base64Image
+                    });
+                    
+                    // Update local data
+                    userData.profilePhotoURL = base64Image;
+                    
+                    // Update display
+                    const profilePhoto = document.getElementById("profilePhoto");
+                    if (profilePhoto) {
+                        profilePhoto.style.backgroundImage = `url('${base64Image}')`;
+                    }
+                    
+                    showNotification('Profile photo updated successfully', 'success');
+                } catch (firestoreError) {
+                    console.error('Error saving to Firestore:', firestoreError);
+                    showNotification('Failed to save photo: ' + firestoreError.message, 'error');
+                }
+            };
+            
+            reader.onerror = function() {
+                console.error('Error reading file');
+                showNotification('Failed to read image file', 'error');
+            };
+            
+            reader.readAsDataURL(file);
+        } catch (error) {
+            console.error('Error uploading photo:', error);
+            showNotification('Failed to upload photo: ' + error.message, 'error');
+        }
     });
 }
 
