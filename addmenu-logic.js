@@ -11,7 +11,7 @@ window.initVendorLocationMap = async function () {
     }
 };
 
-import { auth, db } from './firebase-config.js';
+import { auth, db, storage } from './firebase-config.js';
 
 import {
     onAuthStateChanged
@@ -21,6 +21,12 @@ import {
     collection,
     addDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+import {
+    ref,
+    uploadBytes,
+    getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
 let googleMap = null;
 let mapMarker = null;
@@ -271,11 +277,45 @@ if (saveBtn) {
             const fileInput = document.getElementById('mealImageInput');
             let imageURL = null;
             if (fileInput && fileInput.files[0]) {
-                imageURL = await new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => resolve(reader.result);
-                    reader.readAsDataURL(fileInput.files[0]);
+                Swal.fire({
+                    title: 'Uploading image...',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
                 });
+                
+                const file = fileInput.files[0];
+                
+                // Check file size (max 5MB for menu images)
+                if (file.size > 5 * 1024 * 1024) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Image too large',
+                        text: 'Please select an image smaller than 5MB.'
+                    });
+                    return;
+                }
+                
+                // Create a reference to the file in Firebase Storage
+                const storageRef = ref(storage, `menu-images/${currentVendorId}/${Date.now()}_${file.name}`);
+                
+                try {
+                    // Upload the file
+                    const snapshot = await uploadBytes(storageRef, file);
+                    
+                    // Get the download URL
+                    imageURL = await getDownloadURL(snapshot.ref);
+                    
+                    Swal.close(); // Close the uploading message
+                    
+                } catch (uploadError) {
+                    console.error('Error uploading image:', uploadError);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Upload failed',
+                        text: 'Failed to upload image. Please try again.'
+                    });
+                    return;
+                }
             }
 
             await addDoc(collection(db, "foodItems"), {
