@@ -42,22 +42,22 @@
       position: relative;
       min-height: 100vh;
       color: var(--text-dark);
-      background-color: var(--deep-green);
+      background-color: #2D6A4F;
       line-height: 1.6;
       overflow-x: hidden;
     }
 
-    /* Darker green ambient background, same family as index/meals */
+    /* Mid-green ambient background, same family as index/meals (lighter than before) */
     body::before {
       content: "";
       position: fixed;
       inset: 0;
       z-index: -1;
       background:
-        radial-gradient(900px 600px at 88% -8%, rgba(82, 183, 136, 0.28), transparent 60%),
-        radial-gradient(800px 700px at -10% 12%, rgba(46, 143, 78, 0.30), transparent 55%),
-        radial-gradient(1200px 900px at 50% 120%, rgba(11, 41, 29, 0.55), transparent 60%),
-        linear-gradient(180deg, #14533C 0%, #0C2C20 100%);
+        radial-gradient(900px 600px at 88% -8%, rgba(116, 198, 157, 0.34), transparent 60%),
+        radial-gradient(800px 700px at -10% 12%, rgba(82, 183, 136, 0.32), transparent 55%),
+        radial-gradient(1200px 900px at 50% 120%, rgba(27, 67, 50, 0.35), transparent 60%),
+        linear-gradient(180deg, #3A8063 0%, #226048 100%);
     }
 
     /* ===== HEADER (FLOATING GLASS PILL, CONSISTENT WITH INDEX) ===== */
