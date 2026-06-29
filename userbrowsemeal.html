@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>ReServe | Browse Meals</title>
+  <link rel="icon" type="image/png" href="image/favicon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link
@@ -12,16 +13,24 @@
 
   <style>
     :root {
-      --primary-green: #2E7D32;
-      --accent-green: #66BB6A;
-      --light-green: #F1F8E9;
-      --text-dark: #1A1A1A;
-      --muted: #627264;
-      --radius-lg: 24px;
-      --radius-sm: 14px;
-      --shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+      --deep-green: #0F3D2E;
       --darker-green: #1B4332;
+      --primary-green: #2E7D32;
+      --green: #2F8F4E;
+      --accent-green: #52B788;
+      --soft-green: #74C69D;
+      --mint: #B7E4C7;
+      --light-green: #EAF6EE;
+      --cream: #F6FBF5;
+      --text-dark: #16271E;
+      --muted: #5C7066;
       --white: #ffffff;
+      --deep-sage: #0F3D2E;
+      --glass: rgba(255, 255, 255, 0.78);
+      --radius-lg: 28px;
+      --shadow-sm: 0 8px 24px rgba(15, 61, 46, 0.06);
+      --shadow-md: 0 18px 50px rgba(15, 61, 46, 0.10);
+      --shadow-lg: 0 30px 70px rgba(15, 61, 46, 0.16);
     }
 
     * {
@@ -32,86 +41,146 @@
     }
 
     body {
-      background: var(--light-green);
-      background-image: radial-gradient(circle at top right, #E8F5E9 0%, #F1F8E9 100%);
+      background-color: var(--deep-green);
       padding-bottom: 80px;
+      position: relative;
+      overflow-x: hidden;
     }
 
-    /* HEADER (Matches Browse, Cart, History) */
-    header.dashboard {
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(900px 600px at 88% -8%, rgba(82, 183, 136, 0.28), transparent 60%),
+        radial-gradient(800px 700px at -10% 12%, rgba(46, 143, 78, 0.30), transparent 55%),
+        radial-gradient(1200px 900px at 50% 120%, rgba(11, 41, 29, 0.55), transparent 60%),
+        linear-gradient(180deg, var(--cream) 0%, var(--light-green) 100%);
+    }
+
+    /* HEADER (Glass pill style) */
+    header.site {
       position: fixed;
       top: 0;
+      left: 0;
       width: 100%;
-      height: 80px;
-      background: rgba(46, 125, 50, 0.9);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 8%;
-      color: white;
       z-index: 1000;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.35s ease;
+    }
+
+    .nav-inner {
+      max-width: 1240px;
+      margin: 14px auto 0;
+      width: calc(100% - 48px);
+      height: 70px;
+      padding: 0 14px 0 26px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(18px) saturate(140%);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.35s ease;
+    }
+
+    header.site.scrolled .nav-inner {
+      background: linear-gradient(135deg, rgba(15, 61, 46, 0.92), rgba(27, 67, 50, 0.92));
+      border-color: rgba(255, 255, 255, 0.14);
+      box-shadow: var(--shadow-md);
+      margin-top: 8px;
     }
 
     .logo {
       font-family: "Playfair Display", serif;
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       font-weight: 800;
       letter-spacing: -0.5px;
-      background: linear-gradient(to right, #fff, #C8E6C9);
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .nav-links {
+      color: var(--deep-green);
+      cursor: pointer;
       display: flex;
-      gap: 24px;
       align-items: center;
-    }
-
-    .nav-links a {
-      color: rgba(255, 255, 255, 0.8);
+      gap: 8px;
       text-decoration: none;
-      font-weight: 500;
-      font-size: 0.9rem;
-      position: relative;
     }
 
-    .nav-links a.active {
-      color: white;
-      font-weight: 700;
+    .logo .leaf {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent-green), var(--primary-green));
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 800;
+      font-family: "Playfair Display", serif;
+      box-shadow: 0 6px 14px rgba(46, 125, 50, 0.35);
     }
 
-    .nav-links a.active::after {
-      content: '';
-      position: absolute;
-      bottom: -8px;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: var(--accent-green);
-      border-radius: 2px;
+    nav.menu {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .logout-btn {
-      border: 1.5px solid rgba(255, 255, 255, 0.3);
-      padding: 8px 20px;
-      border-radius: 50px;
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      transition: all 0.3s;
+    nav.menu a {
+      color: var(--darker-green);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.92rem;
+      padding: 9px 16px;
+      border-radius: 12px;
+      transition: all 0.25s ease;
     }
 
-    .logout-btn:hover {
-      background: white;
+    nav.menu a:hover {
+      background: rgba(46, 125, 50, 0.10);
       color: var(--primary-green);
     }
 
+    nav.menu a.active {
+      color: var(--primary-green);
+      background: rgba(46, 125, 50, 0.12);
+    }
+
+    .nav-cta {
+      margin-left: 8px;
+      background: linear-gradient(135deg, var(--green), var(--darker-green));
+      color: #fff !important;
+      padding: 11px 22px !important;
+      border-radius: 14px;
+      box-shadow: 0 10px 22px rgba(27, 67, 50, 0.25);
+    }
+
+    .nav-cta:hover {
+      transform: translateY(-2px);
+    }
+
+    header.site.scrolled .logo {
+      color: #fff;
+    }
+
+    header.site.scrolled nav.menu a {
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    header.site.scrolled nav.menu a:hover,
+    header.site.scrolled nav.menu a.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    header.site.scrolled .nav-cta {
+      background: linear-gradient(135deg, var(--accent-green), var(--soft-green)) !important;
+      color: var(--deep-green) !important;
+    }
+
     main {
-      padding: 120px 8% 40px;
+      padding: 150px 8% 40px;
       max-width: 1100px;
       margin: auto;
     }
@@ -538,14 +607,15 @@
 
     /* MEAL CARDS */
     .meal-card {
-      background: var(--white);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
       border-radius: var(--radius-lg);
       margin-bottom: 20px;
       padding: 20px;
       display: flex;
       align-items: center;
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(255, 255, 255, 0.6);
       transition: transform 0.3s ease;
     }
 
@@ -667,16 +737,20 @@
 <body>
 
   <!-- HEADER -->
-  <header class="dashboard">
-    <div class="logo">ReServe 🌱</div>
-    <nav class="nav-links">
-      <a href="userdashboard.html">Dashboard</a>
-      <a href="userbrowsemeal.html" class="active">Browse Meals</a>
-      <a href="usercart.html">Cart</a>
-      <a href="userhistory.html">History</a>
-      <a href="userprofile.html">Profile</a>
-      <a href="index.html" class="logout-btn">Logout</a>
-    </nav>
+  <header class="site" id="siteHeader">
+    <div class="nav-inner">
+      <a href="userdashboard.html" class="logo">
+        <span class="leaf">r.</span> ReServe
+      </a>
+      <nav class="menu">
+        <a href="userdashboard.html">Dashboard</a>
+        <a href="userbrowsemeal.html" class="active">Browse Meals</a>
+        <a href="usercart.html">Cart</a>
+        <a href="userhistory.html">History</a>
+        <a href="userprofile.html">Profile</a>
+        <a href="index.html" class="nav-cta">Logout</a>
+      </nav>
+    </div>
   </header>
 
 
@@ -767,6 +841,14 @@
   <!-- Add Firebase scripts BEFORE closing body tag -->
   <script type="module" src="firebase-config.js"></script>
   <script type="module" src="userbrowsemeal.js"></script>
+
+  <script>
+    // Glass nav: darken on scroll (consistent with index.html / meals.html)
+    const siteHeader = document.getElementById('siteHeader');
+    window.addEventListener('scroll', () => {
+      siteHeader.classList.toggle('scrolled', window.scrollY > 10);
+    }, { passive: true });
+  </script>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {

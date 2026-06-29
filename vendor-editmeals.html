@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>ReServe | Edit Meal</title>
+    <link rel="icon" type="image/png" href="image/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap"
@@ -12,10 +13,23 @@
 
     <style>
         :root {
-            --primary-green: #2E7D32;
-            --accent-green: #66BB6A;
+            --deep-green: #0F3D2E;
             --darker-green: #1B4332;
-            --soft-bg: #F5FBF6;
+            --primary-green: #2E7D32;
+            --green: #2F8F4E;
+            --accent-green: #52B788;
+            --soft-green: #74C69D;
+            --mint: #B7E4C7;
+            --light-green: #EAF6EE;
+            --cream: #F6FBF5;
+            --text-dark: #16271E;
+            --muted: #5C7066;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.78);
+            --radius-lg: 28px;
+            --shadow-sm: 0 8px 24px rgba(15, 61, 46, 0.06);
+            --shadow-md: 0 18px 50px rgba(15, 61, 46, 0.10);
+            --shadow-lg: 0 30px 70px rgba(15, 61, 46, 0.16);
         }
 
         * {
@@ -26,38 +40,96 @@
         }
 
         body {
-            background: radial-gradient(circle at 0% 0%, #2D6A4F 0%, transparent 40%),
-                radial-gradient(circle at 100% 0%, #52B788 0%, transparent 40%),
-                radial-gradient(circle at 50% 50%, #D8E2DC 0%, #B7E4C7 100%);
+            background-color: var(--deep-green);
             background-attachment: fixed;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
-        header.dashboard {
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                radial-gradient(900px 600px at 88% -8%, rgba(82, 183, 136, 0.28), transparent 60%),
+                radial-gradient(800px 700px at -10% 12%, rgba(46, 143, 78, 0.30), transparent 55%),
+                radial-gradient(1200px 900px at 50% 120%, rgba(11, 41, 29, 0.55), transparent 60%),
+                linear-gradient(180deg, var(--cream) 0%, var(--light-green) 100%);
+        }
+
+        /* HEADER (Glass pill style - no scroll behavior) */
+        header.site {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 75px;
-            background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
-            display: flex;
-            align-items: center;
-            padding: 0 5%;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             z-index: 2000;
         }
 
-        .back-link {
-            text-decoration: none;
-            color: white;
-            font-weight: 600;
+        .nav-inner {
+            max-width: 1240px;
+            margin: 14px auto 0;
+            width: calc(100% - 48px);
+            height: 70px;
+            padding: 0 14px 0 26px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 0.85rem;
-            letter-spacing: 1px;
+            justify-content: space-between;
+            border-radius: 22px;
+            background: linear-gradient(135deg, rgba(15, 61, 46, 0.92), rgba(27, 67, 50, 0.92));
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            backdrop-filter: blur(18px) saturate(140%);
+            -webkit-backdrop-filter: blur(18px) saturate(140%);
+            box-shadow: var(--shadow-md);
+        }
+
+        .logo {
+            font-family: "Playfair Display", serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .logo .leaf {
+            width: 30px;
+            height: 30px;
+            display: grid;
+            place-items: center;
+            border-radius: 9px;
+            background: linear-gradient(135deg, var(--accent-green), var(--primary-green));
+            color: #fff;
+            font-size: 1rem;
+            box-shadow: 0 6px 14px rgba(46, 125, 50, 0.35);
+        }
+
+        nav.menu {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        nav.menu a {
+            color: rgba(255, 255, 255, 0.88);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.92rem;
+            padding: 9px 16px;
+            border-radius: 12px;
+            transition: all 0.25s ease;
+        }
+
+        nav.menu a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
         }
 
         .edit-wrapper {
@@ -66,20 +138,21 @@
             max-width: 1300px;
             margin: 0 auto;
             gap: 40px;
-            padding: 120px 40px 60px;
+            padding: 140px 40px 60px;
             min-height: 100vh;
         }
 
         .preview-pane {
             position: sticky;
-            top: 110px;
+            top: 130px;
             height: fit-content;
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             padding: 40px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.6);
             text-align: center;
+            box-shadow: var(--shadow-sm);
         }
 
         .preview-pane h3 {
@@ -108,12 +181,12 @@
         }
 
         .form-pane {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             padding: 60px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: var(--shadow-sm);
             position: relative;
         }
 
@@ -227,14 +300,15 @@
 
 <body>
 
-    <header class="dashboard">
-        <a href="vendordashboard.html" class="back-link">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-            BACK TO DASHBOARD
-        </a>
+    <header class="site">
+        <div class="nav-inner">
+            <a href="vendordashboard.html" class="logo">
+                <span class="leaf">🌱</span> ReServe
+            </a>
+            <nav class="menu">
+                <a href="vendordashboard.html">Back to Dashboard</a>
+            </nav>
+        </div>
     </header>
 
     <div class="edit-wrapper">
