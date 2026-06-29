@@ -92,9 +92,28 @@
         }
 
         header.site.scrolled .nav-inner {
-            background: rgba(255, 255, 255, 0.85);
+            background: linear-gradient(135deg, rgba(15, 61, 46, 0.92), rgba(27, 67, 50, 0.92));
+            border-color: rgba(255, 255, 255, 0.14);
             box-shadow: var(--shadow-md);
             margin-top: 8px;
+        }
+
+        header.site.scrolled .logo {
+            color: #fff;
+        }
+
+        header.site.scrolled nav.menu a {
+            color: rgba(255, 255, 255, 0.88);
+        }
+
+        header.site.scrolled nav.menu a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        header.site.scrolled .nav-cta {
+            background: linear-gradient(135deg, var(--accent-green), var(--soft-green)) !important;
+            color: var(--deep-green) !important;
         }
 
         .logo {
